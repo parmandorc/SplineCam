@@ -6,6 +6,11 @@
 
 int main()
 {
-	std::cout << "hello world" << std::endl;
+	if (!glfwInit())
+	{
+		std::cerr << "GLFW init failed!" << std::endl;
+		return -1;
+	}
+
 	return 0;
 }
