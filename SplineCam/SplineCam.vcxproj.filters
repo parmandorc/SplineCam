@@ -34,6 +34,15 @@
     <Filter Include="Source Files\src\SplineCam">
       <UniqueIdentifier>{d243e16d-c1d7-4230-93e1-94d1d288138d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\Shaders">
+      <UniqueIdentifier>{74a5fcbc-6a48-4f69-9194-62ca133f416a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets">
+      <UniqueIdentifier>{0bfee6e7-a973-4b1a-93ed-be35325c3062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets\Shaders">
+      <UniqueIdentifier>{697985ac-0929-4256-8b96-8e0e6f081307}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -65,5 +74,16 @@
     <ClInclude Include="src\SplineCam\SplineCam.h">
       <Filter>Source Files\src\SplineCam</Filter>
     </ClInclude>
+    <ClInclude Include="src\Shaders\Shader.h">
+      <Filter>Source Files\src\Shaders</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\Shaders\basic.frag">
+      <Filter>Source Files\assets\Shaders</Filter>
+    </None>
+    <None Include="assets\Shaders\basic.vert">
+      <Filter>Source Files\assets\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
