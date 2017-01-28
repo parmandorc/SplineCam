@@ -42,9 +42,25 @@ public:
 
 	void Update() 
 	{
+		static const float speed = 0.0001f;
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
-			printf("Key W pressed\n");
+			quadPosOffset.y += speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_S))
+		{
+			quadPosOffset.y -= speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_A))
+		{
+			quadPosOffset.x -= speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_D))
+		{
+			quadPosOffset.x += speed;
 		}
 	}
 
@@ -61,7 +77,7 @@ protected:
 		// create one buffer in the GPU, use it as an array buffer and set the data
 		glGenBuffers(1, &vertexBufferObject);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	}
 
 	void InitIBO()
@@ -91,6 +107,9 @@ protected:
 	{
 		// use the shader
 		shader.Use();
+
+		// set posOffset uniform
+		shader.SetUniform("posOffset", quadPosOffset);
 
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
@@ -140,6 +159,8 @@ private:
 	
 	// shader
 	Shader shader;
+
+	glm::vec3 quadPosOffset;
 
 	bool wireframeMode = false;
 };

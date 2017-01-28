@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <map>
 
 class Shader
 {
@@ -14,6 +15,8 @@ class Shader
 		VERTEX,
 		FRAGMENT
 	};
+
+	std::map<const GLchar*, GLuint> uniformsLocation;
 
 public:
 	Shader() {}
@@ -73,11 +76,20 @@ public:
 		glUseProgram(program);
 	}
 
+	// Add any SetUniform needed below... 
+
+	void SetUniform(GLchar* name, const glm::vec3& v)
+	{
+		GLint location = GetUniformLocation(name);
+		glUniform3f(location, v.x, v.y, v.z);
+	}
+
 protected:
 
 	void Clear()
 	{
 		glDeleteProgram(program);
+		uniformsLocation.clear();
 	}
 
 	bool LoadShader(ShaderType type, const char* shaderFile, GLuint& outShader)
@@ -135,6 +147,17 @@ protected:
 		file.close();
 
 		return true;
+	}
+
+	GLint GetUniformLocation(GLchar* name)
+	{
+		auto itr = uniformsLocation.find(name);
+		if (itr == uniformsLocation.end())
+		{
+			uniformsLocation[name] = glGetUniformLocation(program, name);
+		}
+
+		return uniformsLocation[name];
 	}
 
 };
