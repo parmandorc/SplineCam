@@ -42,7 +42,14 @@ public:
 		Terminate();
 	}
 
-	void OnKeyPressed(int key) override { };
+	void OnKeyPressed(int key) override 
+	{
+		if (key == GLFW_KEY_F1)
+		{
+			ToggleWireframeMode();
+		}
+	};
+
 	void OnKeyReleased(int key) override { };
 	void OnMouseButtonPressed(int button, double x, double y) override { printf("Mouse button %d pressed at ( %f , %f )\n", button, x, y); };
 	void OnMouseButtonReleased(int button, double x, double y) override { printf("Mouse button %d released at ( %f , %f )\n", button, x, y); };
@@ -58,7 +65,7 @@ public:
 
 	void Render() 
 	{
-		DrawTriangle();
+		DrawQuad();
 	}
 
 	
@@ -74,11 +81,6 @@ protected:
 
 	void InitVAO()
 	{
-		// create one buffer in the GPU, use it as an array buffer and set the data
-		glGenBuffers(1, &vertexBufferObject);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-
 		// create one vertex array object for drawing and use it. This vertexArrayObject is the one who will deal with the vertex buffer
 		glGenVertexArrays(1, &vertexArrayObject);
 		glBindVertexArray(vertexArrayObject);
@@ -140,7 +142,7 @@ protected:
 		glDeleteShader(fragmentShader);
 	}
 
-	void DrawTriangle()
+	void DrawQuad()
 	{
 		// tell the program to be used
 		glUseProgram(shaderProgram);
@@ -148,8 +150,8 @@ protected:
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
 
-		// tell to draw triangles starting from the 0 index(pos) of the active vertexArrayObject(that has 3 vertices).
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// tell to draw triangles starting from the 0 index(pos) of the active vertexArrayObject(that has 6 vertices).
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
@@ -163,20 +165,34 @@ protected:
 		glDeleteBuffers(1, &vertexBufferObject);
 	}
 
+	void ToggleWireframeMode()
+	{
+		wireframeMode = !wireframeMode;
+		glPolygonMode(GL_FRONT_AND_BACK, wireframeMode ? GL_LINE : GL_FILL);		
+	}
+
 private:
 
-	// vertices of the triangle
-	GLfloat vertices[9] = 
+	// vertices of the quad (2 triangles
+	GLfloat vertices[18] = 
 	{
-		0.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-	   -0.5f, -0.5f, 0.0f 
+		// triangle 1
+		-0.5f,	0.5f, 0.0f,
+		 0.5f,	0.5f, 0.0f,
+	     0.5f, -0.5f, 0.0f,
+
+	   // triangle 2
+		-0.5f,  0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f
 	};
 
 	// vbo, vao and shader program
 	GLuint vertexBufferObject;
 	GLuint vertexArrayObject; 
 	GLuint shaderProgram;
+
+	bool wireframeMode = false;
 };
 
 #endif
