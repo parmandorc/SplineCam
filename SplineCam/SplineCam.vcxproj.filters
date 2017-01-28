@@ -28,6 +28,12 @@
     <Filter Include="Source Files\common\includes\GLFW">
       <UniqueIdentifier>{641285d1-2b1b-4586-9a39-f1a60523a87c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\Input">
+      <UniqueIdentifier>{c72d2973-299c-4c71-baf9-0b54bdb978e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\SplineCam">
+      <UniqueIdentifier>{d243e16d-c1d7-4230-93e1-94d1d288138d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -52,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="common\includes\GLFW\glfw3native.h">
       <Filter>Source Files\common\includes\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\Input.h">
+      <Filter>Source Files\src\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\SplineCam.h">
+      <Filter>Source Files\src\SplineCam</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

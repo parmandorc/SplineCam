@@ -157,6 +157,8 @@
     <ClInclude Include="common\includes\GL\glew.h" />
     <ClInclude Include="common\includes\GL\glxew.h" />
     <ClInclude Include="common\includes\GL\wglew.h" />
+    <ClInclude Include="src\Input\Input.h" />
+    <ClInclude Include="src\SplineCam\SplineCam.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

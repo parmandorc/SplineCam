@@ -4,6 +4,9 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+#include "Input/Input.h"
+#include "SplineCam/SplineCam.h"
+
 int main()
 {
 	// init GLFW and GLEW
@@ -36,6 +39,16 @@ int main()
 
 	glfwMakeContextCurrent(window);
 
+	// the SplineCam
+	SplineCam splineCam;
+
+	// init input
+	Input::SetWindow(window);
+	Input::SetListener(static_cast<InputListener*>(&splineCam));
+	glfwSetKeyCallback(window, Input::OnKeyCallback);
+	glfwSetMouseButtonCallback(window, Input::OnMouseButtonCallback);
+	glfwSetScrollCallback(window, Input::OnMouseScrollCallback);
+
 	// main loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -44,6 +57,9 @@ int main()
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		splineCam.Update();
+		splineCam.Render();
+
 		glfwSwapBuffers(window);
 	}
 
@@ -51,3 +67,6 @@ int main()
 
 	return 0;
 }
+
+
+
