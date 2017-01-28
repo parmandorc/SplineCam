@@ -9,18 +9,10 @@
 
 int main()
 {
-	// init GLFW and GLEW
+	// init glfw
 	if (!glfwInit())
 	{
 		std::cerr << "GLFW init failed!" << std::endl;
-		return -1;
-	}
-
-	glewExperimental = GL_TRUE;
-
-	if (!glewInit())
-	{
-		std::cerr << "GLEW init failed!" << std::endl;
 		return -1;
 	}
 
@@ -39,7 +31,15 @@ int main()
 
 	glfwMakeContextCurrent(window);
 
-	// the SplineCam
+	// Init glew
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK)
+	{
+		std::cerr << "GLEW init failed!" << std::endl;
+		return -1;
+	}
+
+	// init SplineCam
 	SplineCam splineCam;
 
 	// init input
