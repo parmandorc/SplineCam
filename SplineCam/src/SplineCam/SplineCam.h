@@ -86,12 +86,16 @@ public:
 
 	void OnKeyPressed(int key) override { };
 	void OnKeyReleased(int key) override { };
-	void OnMouseButtonPressed(int button) override { };
-	void OnMouseButtonReleased(int button) override { };
+	void OnMouseButtonPressed(int button, double x, double y) override { printf("Mouse button %d pressed at ( %f , %f )\n", button, x, y); };
+	void OnMouseButtonReleased(int button, double x, double y) override { printf("Mouse button %d released at ( %f , %f )\n", button, x, y); };
 	void OnMouseScroll(double xoffset, double yoffset) override { };
 
 	void Update() 
 	{
+		if (Input::isKeyPressed(GLFW_KEY_W))
+		{
+			printf("Key W pressed\n");
+		}
 	}
 
 	void Render() 

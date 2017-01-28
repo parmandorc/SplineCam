@@ -9,8 +9,8 @@ public:
 
 	virtual void OnKeyPressed(int key) {};
 	virtual void OnKeyReleased(int key) {};
-	virtual void OnMouseButtonPressed(int button) {};
-	virtual void OnMouseButtonReleased(int button) {};
+	virtual void OnMouseButtonPressed(int button, double x, double y) {};
+	virtual void OnMouseButtonReleased(int button, double x, double y) {};
 	virtual void OnMouseScroll(double xoffset, double yoffset) {};
 };
 
@@ -45,11 +45,11 @@ public:
 	{
 		if (action == GLFW_PRESS)
 		{
-			onKeyPressed(key);
+			s_listener->OnKeyPressed(key);
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			onKeyReleased(key);
+			s_listener->OnKeyReleased(key);
 		}
 	}
 
@@ -57,45 +57,22 @@ public:
 
 	static void OnMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+
 		if (action == GLFW_PRESS)
 		{
-			s_listener->OnMouseButtonPressed(button);
+			s_listener->OnMouseButtonPressed(button, x, y);
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			s_listener->OnMouseButtonReleased(button);
+			s_listener->OnMouseButtonReleased(button, x, y);
 		}
 	}
 
 	static void OnMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	{
 		s_listener->OnMouseScroll(xoffset, yoffset);
-	}
-
-protected:
-
-	// Keyboard
-
-	static void onKeyPressed(int key)
-	{
-		s_listener->OnKeyPressed(key);
-	}
-
-	static void onKeyReleased(int key)
-	{
-		s_listener->OnKeyReleased(key);
-	}
-
-	// Mouse
-
-	static void onMouseButtonPressed(int button)
-	{
-		s_listener->OnMouseButtonPressed(button);
-	}
-
-	static void onMouseButtonReleased(int button)
-	{
-		s_listener->OnMouseButtonReleased(button);
 	}
 };
 
