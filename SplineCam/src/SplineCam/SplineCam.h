@@ -2,27 +2,8 @@
 #define SPLINE_CAM_H
 
 #include "../Input/Input.h"
+#include "../Shaders/Shader.h"
 
-// basic vertex shader into an string
-static const GLchar* s_vertexShaderSrc =
-"#version 330 core\n"
-"layout (location = 0) in vec3 pos;"
-"void main()"
-"{"
-"	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0f);"
-"}";
-
-// basic fragment shader into an string
-static const GLchar* s_fragmentShaderSrc =
-"#version 330 core\n"
-"out vec4 frag_color;"
-"void main()"
-"{"
-"	frag_color = vec4(1.0f, 0.0f, 0.0f, 1.0f);"
-"}";
-
-// SplineCam
-//
 class SplineCam : public InputListener
 {
 public:
@@ -37,9 +18,10 @@ public:
 		// init the vertex array object
 		InitVAO();
 
-		// init the shader
-		InitShader();
+		// load shader
+		shader.Load("assets/Shaders/basic.vert", "assets/Shaders/basic.frag");
 	}
+
 	~SplineCam() 
 	{
 		Terminate();
@@ -105,58 +87,10 @@ protected:
 		glEnableVertexAttribArray(0);
 	}
 
-	void InitShader()
-	{
-		// create vertex shader
-		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexShader, 1, &s_vertexShaderSrc, nullptr);
-		glCompileShader(vertexShader);
-
-		GLint result;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
-		if (!result)
-		{
-			GLchar shaderInfoLog[512];
-			glGetShaderInfoLog(vertexShader, sizeof(shaderInfoLog), nullptr, shaderInfoLog);
-			printf("Vertex shader failed to compile.\n %s", shaderInfoLog);
-		}
-
-		// create fragment shader
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragmentShader, 1, &s_fragmentShaderSrc, nullptr);
-		glCompileShader(fragmentShader);
-
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
-		if (!result)
-		{
-			GLchar shaderInfoLog[512];
-			glGetShaderInfoLog(fragmentShader, sizeof(shaderInfoLog), nullptr, shaderInfoLog);
-			printf("Fragment shader failed to compile.\n %s", shaderInfoLog);
-		}
-
-		// create the shader program and attach the shaders to use
-		shaderProgram = glCreateProgram();
-		glAttachShader(shaderProgram, vertexShader);
-		glAttachShader(shaderProgram, fragmentShader);
-		glLinkProgram(shaderProgram);
-
-		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result);
-		if (!result)
-		{
-			GLchar programInfoLog[512];
-			glGetProgramInfoLog(shaderProgram, sizeof(programInfoLog), nullptr, programInfoLog);
-			printf("Shader program failed to link.\n %s", programInfoLog);
-		}
-
-		// delete the created shaders as they are already linked to the program
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-	}
-
 	void DrawQuad()
 	{
-		// tell the program to be used
-		glUseProgram(shaderProgram);
+		// use the shader
+		shader.Use();
 
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
@@ -170,8 +104,6 @@ protected:
 
 	void Terminate()
 	{
-		// delete shader program and genereted vao, vbo and ibo
-		glDeleteProgram(shaderProgram);
 		glDeleteVertexArrays(1, &vertexArrayObject);
 		glDeleteBuffers(1, &vertexBufferObject);
 		glDeleteBuffers(1, &indexBufferObject);
@@ -206,8 +138,8 @@ private:
 	GLuint indexBufferObject;
 	GLuint vertexArrayObject; 
 	
-	// shader program
-	GLuint shaderProgram;
+	// shader
+	Shader shader;
 
 	bool wireframeMode = false;
 };
