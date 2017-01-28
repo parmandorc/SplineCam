@@ -153,6 +153,29 @@
   <ItemGroup>
     <ClInclude Include="common\includes\GLFW\glfw3.h" />
     <ClInclude Include="common\includes\GLFW\glfw3native.h" />
+    <ClInclude Include="common\includes\glm\common.hpp" />
+    <ClInclude Include="common\includes\glm\exponential.hpp" />
+    <ClInclude Include="common\includes\glm\ext.hpp" />
+    <ClInclude Include="common\includes\glm\fwd.hpp" />
+    <ClInclude Include="common\includes\glm\geometric.hpp" />
+    <ClInclude Include="common\includes\glm\glm.hpp" />
+    <ClInclude Include="common\includes\glm\integer.hpp" />
+    <ClInclude Include="common\includes\glm\mat2x2.hpp" />
+    <ClInclude Include="common\includes\glm\mat2x3.hpp" />
+    <ClInclude Include="common\includes\glm\mat2x4.hpp" />
+    <ClInclude Include="common\includes\glm\mat3x2.hpp" />
+    <ClInclude Include="common\includes\glm\mat3x3.hpp" />
+    <ClInclude Include="common\includes\glm\mat3x4.hpp" />
+    <ClInclude Include="common\includes\glm\mat4x2.hpp" />
+    <ClInclude Include="common\includes\glm\mat4x3.hpp" />
+    <ClInclude Include="common\includes\glm\mat4x4.hpp" />
+    <ClInclude Include="common\includes\glm\matrix.hpp" />
+    <ClInclude Include="common\includes\glm\packing.hpp" />
+    <ClInclude Include="common\includes\glm\trigonometric.hpp" />
+    <ClInclude Include="common\includes\glm\vec2.hpp" />
+    <ClInclude Include="common\includes\glm\vec3.hpp" />
+    <ClInclude Include="common\includes\glm\vec4.hpp" />
+    <ClInclude Include="common\includes\glm\vector_relational.hpp" />
     <ClInclude Include="common\includes\GL\eglew.h" />
     <ClInclude Include="common\includes\GL\glew.h" />
     <ClInclude Include="common\includes\GL\glxew.h" />
@@ -164,6 +187,9 @@
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag" />
     <None Include="assets\Shaders\basic.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="common\includes\glm\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

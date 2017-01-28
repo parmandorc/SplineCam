@@ -43,6 +43,9 @@
     <Filter Include="Source Files\assets\Shaders">
       <UniqueIdentifier>{697985ac-0929-4256-8b96-8e0e6f081307}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common\includes\glm">
+      <UniqueIdentifier>{597ea30c-07c3-4779-92b4-a9624e4e4149}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -77,6 +80,75 @@
     <ClInclude Include="src\Shaders\Shader.h">
       <Filter>Source Files\src\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="common\includes\glm\common.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\exponential.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\ext.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\fwd.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\geometric.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\glm.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\integer.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat2x2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat2x3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat2x4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat3x2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat3x3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat3x4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat4x2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat4x3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat4x4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\matrix.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\packing.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\trigonometric.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vec2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vec3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vec4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vector_relational.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag">
@@ -85,5 +157,10 @@
     <None Include="assets\Shaders\basic.vert">
       <Filter>Source Files\assets\Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="common\includes\glm\CMakeLists.txt">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </Text>
   </ItemGroup>
 </Project>
