@@ -31,6 +31,9 @@ public:
 		// init the vertex buffer object
 		InitVBO();
 
+		// init the indeces buffer object
+		InitIBO();
+
 		// init the vertex array object
 		InitVAO();
 
@@ -77,6 +80,14 @@ protected:
 		glGenBuffers(1, &vertexBufferObject);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+	}
+
+	void InitIBO()
+	{
+		// create one buffer in the GPU, use it as an element array buffer and set the data
+		glGenBuffers(1, &indexBufferObject);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
 	void InitVAO()
@@ -151,7 +162,7 @@ protected:
 		glBindVertexArray(vertexArrayObject);
 
 		// tell to draw triangles starting from the 0 index(pos) of the active vertexArrayObject(that has 6 vertices).
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)indices);
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
@@ -159,10 +170,11 @@ protected:
 
 	void Terminate()
 	{
-		// delete shader program and genereted vao and vbo
+		// delete shader program and genereted vao, vbo and ibo
 		glDeleteProgram(shaderProgram);
 		glDeleteVertexArrays(1, &vertexArrayObject);
 		glDeleteBuffers(1, &vertexBufferObject);
+		glDeleteBuffers(1, &indexBufferObject);
 	}
 
 	void ToggleWireframeMode()
@@ -173,23 +185,28 @@ protected:
 
 private:
 
-	// vertices of the quad (2 triangles
-	GLfloat vertices[18] = 
+	// vertices of the quad
+	GLfloat vertices[12] = 
 	{
-		// triangle 1
 		-0.5f,	0.5f, 0.0f,
 		 0.5f,	0.5f, 0.0f,
 	     0.5f, -0.5f, 0.0f,
-
-	   // triangle 2
-		-0.5f,  0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
 		-0.5f, -0.5f, 0.0f
 	};
 
-	// vbo, vao and shader program
+	// indices to the vertex of the quad
+	GLuint indices[6] =
+	{
+		0, 1, 2, // first triangle
+		0, 2, 3  // second triangle
+	};
+
+	// vbo, vao, ibo 
 	GLuint vertexBufferObject;
+	GLuint indexBufferObject;
 	GLuint vertexArrayObject; 
+	
+	// shader program
 	GLuint shaderProgram;
 
 	bool wireframeMode = false;
