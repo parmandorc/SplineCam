@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include "glm/gtc/type_ptr.hpp"
 
 class Shader
 {
@@ -82,6 +83,12 @@ public:
 	{
 		GLint location = GetUniformLocation(name);
 		glUniform3f(location, v.x, v.y, v.z);
+	}
+
+	void SetUniform(GLchar* name, const glm::mat4& mat4)
+	{
+		GLint location = GetUniformLocation(name);
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
 	}
 
 protected:

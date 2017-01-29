@@ -4,6 +4,8 @@
 #include "../Input/Input.h"
 #include "../Shaders/Shader.h"
 
+#include "glm/gtc/matrix_transform.hpp"
+
 class SplineCam : public InputListener
 {
 public:
@@ -45,28 +47,30 @@ public:
 		static const float speed = 0.0001f;
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
-			quadPosOffset.y += speed;
+			cubePos.y += speed;
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_S))
 		{
-			quadPosOffset.y -= speed;
+			cubePos.y -= speed;
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_A))
 		{
-			quadPosOffset.x -= speed;
+			cubePos.x -= speed;
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_D))
 		{
-			quadPosOffset.x += speed;
+			cubePos.x += speed;
 		}
+
+		cubeRotY += 0.0005f;
 	}
 
 	void Render() 
 	{
-		DrawQuad();
+		DrawCube();
 	}
 
 	
@@ -103,19 +107,37 @@ protected:
 		glEnableVertexAttribArray(0);
 	}
 
-	void DrawQuad()
+	void DrawCube()
 	{
+		// build model, view, projection matrix
+		glm::mat4 model;
+		model= glm::translate(model, cubePos) * glm::rotate(model, cubeRotY, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+		glm::vec3 camPos(0.0f, 0.0f, 0.0f);
+		glm::vec3 camTargetPos(0.0f, 0.0f, -1.0f);
+		glm::vec3 camUp(0.0f, 1.0f, 0.0f);
+	
+		glm::mat4 view = glm::lookAt(camPos, camTargetPos, camUp);
+
+		float fieldOfView = 45.0f; // degrees
+		float aspectRatio = 800.0f / 600.0f; // window width/window height
+		float zNear = 0.1f;
+		float zFar = 100.0f;
+		glm::mat4 projection = glm::perspective(glm::radians(fieldOfView), aspectRatio, zNear, zFar);
+
 		// use the shader
 		shader.Use();
 
-		// set posOffset uniform
-		shader.SetUniform("posOffset", quadPosOffset);
+		// set uniforms
+		shader.SetUniform("model", model);
+		shader.SetUniform("view", view);
+		shader.SetUniform("projection", projection);
 
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
 
-		// tell to draw triangles starting from the 0 index(pos) of the active vertexArrayObject(that has 6 vertices).
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)indices);
+		// tell to draw triangles by using the IBO
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
@@ -136,22 +158,33 @@ protected:
 
 private:
 
-	// vertices of the quad
-	GLfloat vertices[12] = 
+	// vertices of the cube
+	GLfloat vertices[24] =
 	{
-		-0.5f,	0.5f, 0.0f,
-		 0.5f,	0.5f, 0.0f,
-	     0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
+		-1.0f,	1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,	1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f
 	};
 
-	// indices to the vertex of the quad
-	GLuint indices[6] =
-	{
-		0, 1, 2, // first triangle
-		0, 2, 3  // second triangle
-	};
 
+	// indices to cube vertices
+	GLuint indices[36] =
+	{
+	   // tri 1      tri 2
+		0, 2, 1,	0, 3, 2,	// front face
+		4, 6, 5,    4, 7, 6,	// back face	
+		4, 3, 0,    4, 7, 3,	// left face	
+		1, 6, 5,    1, 2, 6,	// right face	
+		4, 1, 5,    4, 0, 1,	// top face	
+		7, 2, 6,    7, 3, 2		// bottom face	
+	};
+	
 	// vbo, vao, ibo 
 	GLuint vertexBufferObject;
 	GLuint indexBufferObject;
@@ -160,7 +193,8 @@ private:
 	// shader
 	Shader shader;
 
-	glm::vec3 quadPosOffset;
+	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, -10.0f);
+	float cubeRotY = 0.0f;
 
 	bool wireframeMode = false;
 };
