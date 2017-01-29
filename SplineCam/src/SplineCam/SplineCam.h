@@ -193,9 +193,7 @@ private:
 	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, -10.0f);
 	float cubeRotY = 0.0f;
 
-	// camPos
-	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 0.0f);
-
+	// camera
 	Camera camera;
 
 	bool wireframeMode = false;
