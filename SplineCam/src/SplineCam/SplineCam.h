@@ -44,23 +44,36 @@ public:
 
 	void Update() 
 	{
-		static const float speed = 0.0001f;
-		if (Input::isKeyPressed(GLFW_KEY_W))
+		UpdateCube();
+		UpdateCamera();
+	}
+
+	void Render() 
+	{
+		DrawCube();
+	}
+	
+protected:
+
+	void UpdateCube()
+	{
+		static const float speed = 0.0005f;
+		if (Input::isKeyPressed(GLFW_KEY_UP))
 		{
 			cubePos.y += speed;
 		}
 
-		if (Input::isKeyPressed(GLFW_KEY_S))
+		if (Input::isKeyPressed(GLFW_KEY_DOWN))
 		{
 			cubePos.y -= speed;
 		}
 
-		if (Input::isKeyPressed(GLFW_KEY_A))
+		if (Input::isKeyPressed(GLFW_KEY_LEFT))
 		{
 			cubePos.x -= speed;
 		}
 
-		if (Input::isKeyPressed(GLFW_KEY_D))
+		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
 		{
 			cubePos.x += speed;
 		}
@@ -68,13 +81,39 @@ public:
 		cubeRotY += 0.0005f;
 	}
 
-	void Render() 
+	void UpdateCamera()
 	{
-		DrawCube();
-	}
+		static const float speed = 0.0005f;
+		if (Input::isKeyPressed(GLFW_KEY_W))
+		{
+			camPos.y -= speed;
+		}
 
-	
-protected:
+		if (Input::isKeyPressed(GLFW_KEY_S))
+		{
+			camPos.y += speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_A))
+		{
+			camPos.x += speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_D))
+		{
+			camPos.x -= speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_Q))
+		{
+			camPos.z += speed;
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_E))
+		{
+			camPos.z -= speed;
+		}
+	}
 
 	void InitVBO()
 	{
@@ -113,7 +152,7 @@ protected:
 		glm::mat4 model;
 		model= glm::translate(model, cubePos) * glm::rotate(model, cubeRotY, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-		glm::vec3 camPos(0.0f, 0.0f, 0.0f);
+
 		glm::vec3 camTargetPos(0.0f, 0.0f, -1.0f);
 		glm::vec3 camUp(0.0f, 1.0f, 0.0f);
 	
@@ -193,8 +232,12 @@ private:
 	// shader
 	Shader shader;
 
+	// cubePos
 	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, -10.0f);
 	float cubeRotY = 0.0f;
+
+	// camPos
+	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	bool wireframeMode = false;
 };
