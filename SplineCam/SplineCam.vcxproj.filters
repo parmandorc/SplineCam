@@ -46,6 +46,9 @@
     <Filter Include="Source Files\common\includes\glm">
       <UniqueIdentifier>{597ea30c-07c3-4779-92b4-a9624e4e4149}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\SplineCam\Camera">
+      <UniqueIdentifier>{e18590b8-f2c3-42ab-beb9-bf97d13c5d8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="common\includes\glm\vector_relational.hpp">
       <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\Camera\Camera.h">
+      <Filter>Source Files\src\SplineCam\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

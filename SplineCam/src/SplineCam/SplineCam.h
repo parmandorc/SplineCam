@@ -5,6 +5,7 @@
 #include "../Shaders/Shader.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "Camera/Camera.h"
 
 class SplineCam : public InputListener
 {
@@ -22,6 +23,9 @@ public:
 
 		// load shader
 		shader.Load("assets/Shaders/basic.vert", "assets/Shaders/basic.frag");
+
+		// init camera
+		camera.Init(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), 70.0f, 800.0f/600.0f, 0.1f, 1000.0f);
 	}
 
 	~SplineCam() 
@@ -45,7 +49,7 @@ public:
 	void Update() 
 	{
 		UpdateCube();
-		UpdateCamera();
+		camera.Update();
 	}
 
 	void Render() 
@@ -81,40 +85,6 @@ protected:
 		cubeRotY += 0.0005f;
 	}
 
-	void UpdateCamera()
-	{
-		static const float speed = 0.0005f;
-		if (Input::isKeyPressed(GLFW_KEY_W))
-		{
-			camPos.y -= speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_S))
-		{
-			camPos.y += speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_A))
-		{
-			camPos.x += speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_D))
-		{
-			camPos.x -= speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_Q))
-		{
-			camPos.z += speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_E))
-		{
-			camPos.z -= speed;
-		}
-	}
-
 	void InitVBO()
 	{
 		// create one buffer in the GPU, use it as an array buffer and set the data
@@ -148,29 +118,16 @@ protected:
 
 	void DrawCube()
 	{
-		// build model, view, projection matrix
+		// build modelViewProjection matrix
 		glm::mat4 model;
-		model= glm::translate(model, cubePos) * glm::rotate(model, cubeRotY, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-
-		glm::vec3 camTargetPos(0.0f, 0.0f, -1.0f);
-		glm::vec3 camUp(0.0f, 1.0f, 0.0f);
-	
-		glm::mat4 view = glm::lookAt(camPos, camTargetPos, camUp);
-
-		float fieldOfView = 45.0f; // degrees
-		float aspectRatio = 800.0f / 600.0f; // window width/window height
-		float zNear = 0.1f;
-		float zFar = 100.0f;
-		glm::mat4 projection = glm::perspective(glm::radians(fieldOfView), aspectRatio, zNear, zFar);
+		model = glm::translate(model, cubePos) * glm::rotate(model, cubeRotY, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
 
 		// use the shader
 		shader.Use();
 
 		// set uniforms
-		shader.SetUniform("model", model);
-		shader.SetUniform("view", view);
-		shader.SetUniform("projection", projection);
+		shader.SetUniform("modelViewProjection", modelViewProjection);
 
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
@@ -238,6 +195,8 @@ private:
 
 	// camPos
 	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	Camera camera;
 
 	bool wireframeMode = false;
 };
