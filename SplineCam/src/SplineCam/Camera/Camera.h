@@ -84,12 +84,12 @@ public:
 
 		if (Input::isKeyPressed(GLFW_KEY_LEFT))
 		{
-			Rotate(glm::vec3(0.0f, angle, 0.0f));
+			Rotate(glm::vec3(0.0f, -angle, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
 		{
-			Rotate(glm::vec3(0.0f, -angle, 0.0f));
+			Rotate(glm::vec3(0.0f, angle, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_UP))
