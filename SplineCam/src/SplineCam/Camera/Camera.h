@@ -1,6 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <iostream>
+
 class Camera
 {
 
@@ -37,11 +39,11 @@ public:
 	void OnMouseMove(float x, float y)
 	{
 		static glm::vec2 lastMousePos = glm::vec2(0.0f, 0.0f);
-
+		static const float sensitivity = 0.005f;
 		if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
 		{
-			//yAngle = (x - lastMousePos.x);
-			//xAngle = (y - lastMousePos.y);
+			xAngle += (y - lastMousePos.y) * sensitivity;
+			yAngle += (x - lastMousePos.x) * sensitivity;
 		}
 			
 		lastMousePos = glm::vec2(x, y);
@@ -50,7 +52,7 @@ public:
 	void Update()
 	{
 		static const float speed = 0.01f;
-		static const float angle = 0.0001f;
+		static const float angle = 0.001f;
 
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
