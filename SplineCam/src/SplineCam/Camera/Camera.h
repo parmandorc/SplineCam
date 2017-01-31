@@ -49,7 +49,7 @@ public:
 
 	void Update()
 	{
-		static const float speed = 0.05f;
+		static const float speed = 0.01f;
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
 			Move(glm::vec3(0.0f, 0.0f, -speed));
@@ -62,12 +62,12 @@ public:
 
 		if (Input::isKeyPressed(GLFW_KEY_A))
 		{
-			Move(glm::vec3(speed, 0.0f, 0.0f));
+			Move(glm::vec3(-speed, 0.0f, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_D))
 		{
-			Move(glm::vec3(-speed, 0.0f, 0.0f));
+			Move(glm::vec3(speed, 0.0f, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_Q))
