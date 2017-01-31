@@ -40,8 +40,8 @@ public:
 
 		if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
 		{
-			yAngle = (x - lastMousePos.x);
-			xAngle = (y - lastMousePos.y);
+			//yAngle = (x - lastMousePos.x);
+			//xAngle = (y - lastMousePos.y);
 		}
 			
 		lastMousePos = glm::vec2(x, y);
@@ -50,6 +50,8 @@ public:
 	void Update()
 	{
 		static const float speed = 0.01f;
+		static const float angle = 0.0001f;
+
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
 			Move(glm::vec3(0.0f, 0.0f, -speed));
@@ -79,11 +81,33 @@ public:
 		{
 			Move(glm::vec3(0.0f, -speed, 0.0f));
 		}
+
+		if (Input::isKeyPressed(GLFW_KEY_LEFT))
+		{
+			Rotate(glm::vec3(0.0f, angle, 0.0f));
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
+		{
+			Rotate(glm::vec3(0.0f, -angle, 0.0f));
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_UP))
+		{
+			Rotate(glm::vec3(angle, 0.0f, 0.0f));
+		}
+
+		if (Input::isKeyPressed(GLFW_KEY_DOWN))
+		{
+			Rotate(glm::vec3(-angle, 0.0f, 0.0f));
+		}
 	}
 
 	glm::mat4 ViewProjectionMatrix() const
 	{
-		glm::mat4 view = glm::lookAt(pos, pos + focusPos, up);
+		glm::mat4 view = glm::mat4();
+		view = glm::rotate(view, yAngle, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(view, xAngle, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::lookAt(pos, pos + focusPos, up);
+
 		glm::mat4 projection = glm::perspective(glm::radians(fov), aspect, zNear, zFar);
 		return projection * view;
 	}
@@ -92,10 +116,10 @@ public:
 	{
 		pos += offset;
 	}
-	void Rotate(float x, float y)
+	void Rotate(const glm::vec3& rot)
 	{
-		xAngle = x;
-		yAngle = y;
+		xAngle += rot.x;
+		yAngle += rot.y;
 	}
 
 protected:
