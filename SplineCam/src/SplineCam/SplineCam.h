@@ -25,7 +25,7 @@ public:
 		shader.Load("assets/Shaders/basic.vert", "assets/Shaders/basic.frag");
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), 70.0f, 800.0f/600.0f, 0.1f, 1000.0f);
+		camera.Init(glm::vec3(0.0f, 1.0f, 10.0f), glm::vec3(0.0f, 0.0f, -10.0f), 45.0f, 1024.0f/768.0f, 0.1f, 1000000.0f);
 	}
 
 	~SplineCam() 
@@ -45,45 +45,23 @@ public:
 	void OnMouseButtonPressed(int button, double x, double y) override { printf("Mouse button %d pressed at ( %f , %f )\n", button, x, y); };
 	void OnMouseButtonReleased(int button, double x, double y) override { printf("Mouse button %d released at ( %f , %f )\n", button, x, y); };
 	void OnMouseScroll(double xoffset, double yoffset) override { };
+	
+	void OnMouseMove(double x, double y) 
+	{
+		camera.OnMouseMove((float)x, (float)y);
+	}
 
 	void Update() 
 	{
-		UpdateCube();
 		camera.Update();
 	}
 
 	void Render() 
 	{
-		DrawCube();
+		DrawCubes();
 	}
 	
 protected:
-
-	void UpdateCube()
-	{
-		static const float speed = 0.0005f;
-		if (Input::isKeyPressed(GLFW_KEY_UP))
-		{
-			cubePos.y += speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_DOWN))
-		{
-			cubePos.y -= speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_LEFT))
-		{
-			cubePos.x -= speed;
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
-		{
-			cubePos.x += speed;
-		}
-
-		cubeRotY += 0.0005f;
-	}
 
 	void InitVBO()
 	{
@@ -116,11 +94,11 @@ protected:
 		glEnableVertexAttribArray(0);
 	}
 
-	void DrawCube()
+	void DrawCubes()
 	{
 		// build modelViewProjection matrix
 		glm::mat4 model;
-		model = glm::translate(model, cubePos) * glm::rotate(model, cubeRotY, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, cubePos);
 		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
 
 		// use the shader
@@ -128,11 +106,21 @@ protected:
 
 		// set uniforms
 		shader.SetUniform("modelViewProjection", modelViewProjection);
+		shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
 
-		// tell to draw triangles by using the IBO
+		// tell to draw cube by using the IBO
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
+
+
+		// draw the floor
+		model = glm::mat4();
+		model = glm::translate(model, floorPos) * glm::scale(model, glm::vec3(10.0f, 0.0001f, 10.f));
+		modelViewProjection = camera.ViewProjectionMatrix() * model;
+		shader.SetUniform("modelViewProjection", modelViewProjection);
+		shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
 
 		// do not use the vertexArrayObject anymore
@@ -190,8 +178,10 @@ private:
 	Shader shader;
 
 	// cubePos
-	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, -10.0f);
-	float cubeRotY = 0.0f;
+	glm::vec3 cubePos = glm::vec3(0.0f, 1.0f, -10.0f);
+
+	// floorPos
+	glm::vec3 floorPos = glm::vec3(0.0f, 0.0f, -10.0f);
 
 	// camera
 	Camera camera;

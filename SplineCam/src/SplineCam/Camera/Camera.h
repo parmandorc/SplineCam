@@ -34,45 +34,68 @@ public:
 	void SetZNear(float zNear) { this->zNear = zNear; }
 	void SetZFar(float zFar) { this->zFar = zFar; }
 	
+	void OnMouseMove(float x, float y)
+	{
+		static glm::vec2 lastMousePos = glm::vec2(0.0f, 0.0f);
+
+		if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+		{
+			yAngle = (x - lastMousePos.x);
+			xAngle = (y - lastMousePos.y);
+		}
+			
+		lastMousePos = glm::vec2(x, y);
+	}
+
 	void Update()
 	{
-		static const float speed = 0.0005f;
+		static const float speed = 0.05f;
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
-			pos.y -= speed;
+			Move(glm::vec3(0.0f, 0.0f, -speed));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_S))
 		{
-			pos.y += speed;
+			Move(glm::vec3(0.0f, 0.0f, speed));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_A))
 		{
-			pos.x += speed;
+			Move(glm::vec3(speed, 0.0f, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_D))
 		{
-			pos.x -= speed;
+			Move(glm::vec3(-speed, 0.0f, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_Q))
 		{
-			pos.z += speed;
+			Move(glm::vec3(0.0f, speed, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_E))
 		{
-			pos.z -= speed;
+			Move(glm::vec3(0.0f, -speed, 0.0f));
 		}
 	}
 
 	glm::mat4 ViewProjectionMatrix() const
 	{
-		glm::mat4 view = glm::lookAt(pos, focusPos, up);
+		glm::mat4 view = glm::lookAt(pos, pos + focusPos, up);
 		glm::mat4 projection = glm::perspective(glm::radians(fov), aspect, zNear, zFar);
 		return projection * view;
+	}
+
+	void Move(const glm::vec3& offset)
+	{
+		pos += offset;
+	}
+	void Rotate(float x, float y)
+	{
+		xAngle = x;
+		yAngle = y;
 	}
 
 protected:
@@ -85,6 +108,9 @@ protected:
 	glm::vec3 pos;
 	glm::vec3 focusPos;
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	float xAngle = 0.0f;
+	float yAngle = 0.0f;
 
 };
 
