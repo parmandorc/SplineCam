@@ -71,6 +71,22 @@ public:
 	void PreviousControlPoint() { selectedControlPoint = selectedControlPoint == 0 ? controlPoints.size() - 1 : selectedControlPoint - 1; }
 	void TranslateControlPoint(glm::vec3 translate) { controlPoints[selectedControlPoint] += translate; CalculateSplinePoints(); }
 
+	void CreateControlPoint() { 
+		controlPoints.insert(controlPoints.begin() + selectedControlPoint, controlPoints[selectedControlPoint]);
+		if (selectedControlPoint != controlPoints.size())
+			NextControlPoint();
+		CalculateSplinePoints();
+	}
+
+	void DeleteControlPoint() { 
+		if (controlPoints.size() > 1) {
+			controlPoints.erase(controlPoints.begin() + selectedControlPoint);
+			if (selectedControlPoint != 0)
+				PreviousControlPoint();
+			CalculateSplinePoints();
+		}
+	}
+
 protected:
 
 	// Calculates the value of the i-th spline section for the given value of the parameter t [0, 1]
@@ -110,7 +126,7 @@ protected:
 		for (std::vector<glm::vec3> section : splineSections) {
 			points.insert(points.end(), section.begin(), section.end());
 		}
-		points.push_back(controlPoints[controlPoints.size()-1]);
+		points.push_back(controlPoints[controlPoints.size() - 1]);
 		return points;
 	}
 

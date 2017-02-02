@@ -57,6 +57,13 @@ public:
 				else
 					spline.NextControlPoint();
 				break;
+
+			case GLFW_KEY_SPACE:
+				if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+					spline.DeleteControlPoint();
+				else
+					spline.CreateControlPoint();
+				break;
 		}
 	};
 
