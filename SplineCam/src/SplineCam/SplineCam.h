@@ -60,12 +60,15 @@ public:
 	{
 		UpdateCube();
 		camera.Update();
+		
+		animationFrame = fmodf(animationFrame + 0.00025f, 1);
 	}
 
 	void Render() 
 	{
 		DrawCube();
 		spline.Render(camera.ViewProjectionMatrix(), shader);
+		DrawAnimatedPoint();
 	}
 	
 protected:
@@ -150,6 +153,31 @@ protected:
 		glBindVertexArray(0);
 	}
 
+	void DrawAnimatedPoint() {
+		// build modelViewProjection matrix
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
+
+		// use the shader
+		shader.Use();
+
+		// set uniforms
+		shader.SetUniform("modelViewProjection", modelViewProjection);
+
+		// draw the control points
+		glm::vec3 point = spline.GetPoint(animationFrame);
+		glm::vec3 tangent = spline.GetTangent(animationFrame);
+		glPointSize(10.0f);
+		glBegin(GL_POINTS);
+		glVertex3f(point.x, point.y, point.z);
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3f(point.x, point.y, point.z);
+		glVertex3f(point.x + tangent.x, point.y + tangent.y, point.z + tangent.z);
+		glEnd();
+	}
+
 	void Terminate()
 	{
 		glDeleteVertexArrays(1, &vertexArrayObject);
@@ -203,6 +231,9 @@ private:
 	// cubePos
 	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, -10.0f);
 	float cubeRotY = 0.0f;
+
+	// animatedPoint
+	float animationFrame = 0.0f;
 
 	// camera
 	Camera camera;

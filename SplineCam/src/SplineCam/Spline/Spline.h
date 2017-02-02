@@ -52,7 +52,39 @@ public:
 		glEnd();
 	}
 
+	// Returns the value of the spline for the given value of the parameter t [0, 1]
+	glm::vec3 GetPoint(float t) {
+		t = t < 0 ? 0 : t > 1 ? 1 : t;
+		t *= controlPoints.size() - 1;
+		int i = (int)t;
+		return GetPoint(t - i, i);
+	}
+	
+	glm::vec3 GetTangent(float t) {
+		t = t < 0 ? 0 : t > 1 ? 1 : t;
+		t *= controlPoints.size() - 1;
+		int i = (int)t;
+		return GetTangent(t - i, i);
+	}
+
 protected:
+
+	// Calculates the value of the i-th spline section for the given value of the parameter t [0, 1]
+	glm::vec3 GetPoint(float t, int i) {
+		int n = controlPoints.size() - 1;
+		return controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-t * t * t + 3 * t * t - 3 * t + 1) / 6) +
+			controlPoints[i] * ((3 * t * t * t - 6 * t * t + 4) / 6) +
+			controlPoints[i + 1 < n ? i + 1 : n] * ((-3 * t * t * t + 3 * t * t + 3 * t + 1) / 6) +
+			controlPoints[i + 2 < n ? i + 2 : n] * ((t * t * t) / 6);
+	}
+
+	glm::vec3 GetTangent(float t, int i) {
+		int n = controlPoints.size() - 1;
+		return controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-3 * t * t + 6 * t - 3) / 6) +
+			controlPoints[i] * ((9 * t * t - 12 * t) / 6) +
+			controlPoints[i + 1 < n ? i + 1 : n] * ((-9 * t * t + 6 * t + 3) / 6) +
+			controlPoints[i + 2 < n ? i + 2 : n] * ((3 * t * t) / 6);
+	}
 
 	void CalculateSplinePoints() {
 		splineSections.clear();
@@ -62,12 +94,7 @@ protected:
 		for (int i = 0; i <= n; i++) {
 			std::vector<glm::vec3> splineSection;
 			for (float t = step; t < 1.0f; t += step) {
-				splineSection.push_back(
-					controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-t * t * t + 3 * t * t - 3 * t + 1) / 6) +
-					controlPoints[i] * ((3 * t * t * t - 6 * t * t + 4) / 6) +
-					controlPoints[i + 1 < n ? i + 1 : n] * ((-3 * t * t * t + 3 * t * t + 3 * t + 1) / 6) +
-					controlPoints[i + 2 < n ? i + 2 : n] * ((t * t * t) / 6)
-				);
+				splineSection.push_back(GetPoint(t, i));
 			}
 			splineSections.push_back(splineSection);
 		}
