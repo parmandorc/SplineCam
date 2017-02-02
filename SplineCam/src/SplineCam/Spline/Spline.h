@@ -67,6 +67,10 @@ public:
 		return GetTangent(t - i, i);
 	}
 
+	void NextControlPoint() { selectedControlPoint = (selectedControlPoint + 1) % controlPoints.size(); }
+	void PreviousControlPoint() { selectedControlPoint = selectedControlPoint == 0 ? controlPoints.size() - 1 : selectedControlPoint - 1; }
+	void TranslateControlPoint(glm::vec3 translate) { controlPoints[selectedControlPoint] += translate; CalculateSplinePoints(); }
+
 protected:
 
 	// Calculates the value of the i-th spline section for the given value of the parameter t [0, 1]
@@ -110,9 +114,13 @@ protected:
 		return points;
 	}
 
+	// The control points that define the spline
 	std::vector<glm::vec3> controlPoints;
 
+	// The computed points that draw the spline
 	std::vector<std::vector<glm::vec3>> splineSections;
+
+	unsigned int selectedControlPoint = 0;
 };
 
 #endif

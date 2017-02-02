@@ -45,9 +45,18 @@ public:
 
 	void OnKeyPressed(int key) override 
 	{
-		if (key == GLFW_KEY_F1)
+		switch(key)
 		{
-			ToggleWireframeMode();
+			case GLFW_KEY_F1:
+				ToggleWireframeMode();
+				break;
+
+			case GLFW_KEY_TAB:
+				if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+					spline.PreviousControlPoint();
+				else
+					spline.NextControlPoint();
+				break;
 		}
 	};
 
@@ -60,7 +69,8 @@ public:
 	{
 		UpdateCube();
 		camera.Update();
-		
+		UpdateSpline();
+
 		animationFrame = fmodf(animationFrame + 0.00025f, 1);
 	}
 
@@ -97,6 +107,18 @@ protected:
 		}
 
 		cubeRotY += 0.0005f;
+	}
+
+	void UpdateSpline() {
+		static const float speed = 0.01f;
+		if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+			int x = Input::isKeyPressed(GLFW_KEY_D) - Input::isKeyPressed(GLFW_KEY_A);
+			int y = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);
+			int z = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
+			if (x != 0 || y != 0 || z != 0) {
+				spline.TranslateControlPoint(glm::vec3(x, y, z) * speed);
+			}
+		}
 	}
 
 	void InitVBO()
