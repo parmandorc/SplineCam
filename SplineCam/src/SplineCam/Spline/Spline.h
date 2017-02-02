@@ -37,6 +37,10 @@ public:
 		return points;
 	}
 
+	std::vector<glm::vec3> getControlPoints() {
+		return std::vector<glm::vec3>(controlPoints);
+	}
+
 protected:
 
 	std::vector<glm::vec3> controlPoints;

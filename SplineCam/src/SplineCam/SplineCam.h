@@ -163,12 +163,21 @@ protected:
 		
 		// get the points to draw the spline
 		std::vector<glm::vec3> splinePoints = spline.getSplinePoints();
+		std::vector<glm::vec3> controlPoints = spline.getControlPoints();
 
-		// draw the points
+		// draw the spline curve
 		glBegin(GL_LINES);
 		for (int i = 0; i < splinePoints.size() - 1; i++) {
 			glVertex3f(splinePoints[i].x, splinePoints[i].y, splinePoints[i].z);
 			glVertex3f(splinePoints[i+1].x, splinePoints[i+1].y, splinePoints[i+1].z);
+		}
+		glEnd();
+
+		// draw the control points
+		glPointSize(10.0f);
+		glBegin(GL_POINTS);
+		for (glm::vec3 c : controlPoints) {
+			glVertex3f(c.x, c.y, c.z);
 		}
 		glEnd();
 	}
