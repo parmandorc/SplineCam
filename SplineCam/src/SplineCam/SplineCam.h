@@ -30,10 +30,11 @@ public:
 
 		// init spline
 		spline.Init(std::vector<glm::vec3>({
-			glm::vec3(-5.0f, -5.0f, 0.0f),
-			glm::vec3(-1.5f, 2.5f, 0.0f),
-			glm::vec3(1.5f, 2.5f, 0.0f),
-			glm::vec3(5.0f, -5.0f, 0.0f)
+			glm::vec3(-5.0f, -7.5f, 0.0f),
+			glm::vec3(-7.5f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 3.0f, 0.0f),
+			glm::vec3(7.5f, 0.0f, 0.0f),
+			glm::vec3(5.0f, -7.5f, 0.0f),
 		}));
 	}
 
