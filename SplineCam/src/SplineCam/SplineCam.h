@@ -6,6 +6,7 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "Camera/Camera.h"
+#include "Spline/Spline.h"
 
 class SplineCam : public InputListener
 {
@@ -26,6 +27,14 @@ public:
 
 		// init camera
 		camera.Init(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), 70.0f, 800.0f/600.0f, 0.1f, 1000.0f);
+
+		// init spline
+		spline.Init(std::vector<glm::vec3>({
+			glm::vec3(-5.0f, -5.0f, 0.0f),
+			glm::vec3(-1.5f, 2.5f, 0.0f),
+			glm::vec3(1.5f, 2.5f, 0.0f),
+			glm::vec3(5.0f, -5.0f, 0.0f)
+		}));
 	}
 
 	~SplineCam() 
@@ -55,6 +64,7 @@ public:
 	void Render() 
 	{
 		DrawCube();
+		DrawSpline();
 	}
 	
 protected:
@@ -139,6 +149,30 @@ protected:
 		glBindVertexArray(0);
 	}
 
+	void DrawSpline() {
+		// build modelViewProjection matrix
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
+
+		// use the shader
+		shader.Use();
+
+		// set uniforms
+		shader.SetUniform("modelViewProjection", modelViewProjection);
+		
+		// get the points to draw the spline
+		std::vector<glm::vec3> splinePoints = spline.getSplinePoints();
+
+		// draw the points
+		glBegin(GL_LINES);
+		for (int i = 0; i < splinePoints.size() - 1; i++) {
+			glVertex3f(splinePoints[i].x, splinePoints[i].y, splinePoints[i].z);
+			glVertex3f(splinePoints[i+1].x, splinePoints[i+1].y, splinePoints[i+1].z);
+		}
+		glEnd();
+	}
+
 	void Terminate()
 	{
 		glDeleteVertexArrays(1, &vertexArrayObject);
@@ -195,6 +229,9 @@ private:
 
 	// camera
 	Camera camera;
+
+	// spline
+	Spline spline;
 
 	bool wireframeMode = false;
 };
