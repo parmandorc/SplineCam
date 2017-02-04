@@ -180,10 +180,12 @@
     <ClInclude Include="common\includes\GL\glew.h" />
     <ClInclude Include="common\includes\GL\glxew.h" />
     <ClInclude Include="common\includes\GL\wglew.h" />
+    <ClInclude Include="Spline.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Shaders\Shader.h" />
     <ClInclude Include="src\SplineCam\Camera\Camera.h" />
     <ClInclude Include="src\SplineCam\SplineCam.h" />
+    <ClInclude Include="src\SplineCam\Spline\Spline.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag" />
