@@ -5,7 +5,9 @@
 #include "../Shaders/Shader.h"
 
 #include "glm/gtc/matrix_transform.hpp"
-#include "Camera/Camera.h"
+#include "Camera/FollowSplineCamera.h"
+#include "Camera/FPSCamera.h"
+#include "Camera/FreeCamera.h"
 #include "Spline/Spline.h"
 #include "States/FreeCamState.h"
 #include "States/SplineEditorState.h"
@@ -65,8 +67,8 @@ public:
 	};
 
 	void OnKeyReleased(int key) override { };
-	void OnMouseButtonPressed(int button, double x, double y) override { printf("Mouse button %d pressed at ( %f , %f )\n", button, x, y); };
-	void OnMouseButtonReleased(int button, double x, double y) override { printf("Mouse button %d released at ( %f , %f )\n", button, x, y); };
+	void OnMouseButtonPressed(int button, double x, double y) override { };
+	void OnMouseButtonReleased(int button, double x, double y) override { };
 	void OnMouseScroll(double xoffset, double yoffset) override { };
 	
 	void OnMouseMove(double x, double y) 

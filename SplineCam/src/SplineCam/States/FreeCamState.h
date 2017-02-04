@@ -43,7 +43,8 @@ public:
 private:
 
 	// camera
-	Camera camera;
+	//FPSCamera camera;
+	FreeCamera camera;
 };
 
 #endif // !FREE_CAM_STATE_H

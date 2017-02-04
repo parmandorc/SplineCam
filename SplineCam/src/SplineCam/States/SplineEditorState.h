@@ -108,7 +108,7 @@ private:
 	float animationFrame = 0.0f;
 
 	// camera
-	Camera camera;
+	FreeCamera camera;
 
 	// spline
 	Spline spline;

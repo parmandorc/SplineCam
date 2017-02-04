@@ -11,8 +11,20 @@ public:
 
 	void Start() override
 	{
+		// init spline
+		spline.Init(std::vector<glm::vec3>({
+			glm::vec3(0.0f, 1.0f, -15.0f),
+			glm::vec3(0.0f, 1.0f, -3.0f),
+			glm::vec3(-11.0f, 1.0f, -2.0f),
+			glm::vec3(-11.0f, 1.0f, 3.5f),
+			glm::vec3(-2.6f, 1.0f, 3.5f)
+		}));
+
+
+
 		// init camera
-		camera.Init(glm::vec3(0.0f, 1.0f, -15.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Init(spline.GetPoint(0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.SetSpline(&spline);
 	}
 
 	void Stop() override
@@ -37,7 +49,10 @@ public:
 
 private:
 
-	Camera camera;
+	FollowSplineCamera camera;
+
+	// spline
+	Spline spline;
 };
 
 #endif // !FOLLOW_SPLINE_STATE_H

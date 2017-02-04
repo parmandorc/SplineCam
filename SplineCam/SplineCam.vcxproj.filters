@@ -179,6 +179,15 @@
     <ClInclude Include="src\SplineCam\States\FollowSplineState.h">
       <Filter>Source Files\src\SplineCam\States</Filter>
     </ClInclude>
+    <ClInclude Include="src\SplineCam\Camera\FollowSplineCamera.h">
+      <Filter>Source Files\src\SplineCam\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\Camera\FreeCamera.h">
+      <Filter>Source Files\src\SplineCam\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\Camera\FPSCamera.h">
+      <Filter>Source Files\src\SplineCam\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag">

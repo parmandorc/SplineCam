@@ -184,6 +184,9 @@
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Shaders\Shader.h" />
     <ClInclude Include="src\SplineCam\Camera\Camera.h" />
+    <ClInclude Include="src\SplineCam\Camera\FollowSplineCamera.h" />
+    <ClInclude Include="src\SplineCam\Camera\FPSCamera.h" />
+    <ClInclude Include="src\SplineCam\Camera\FreeCamera.h" />
     <ClInclude Include="src\SplineCam\SplineCam.h" />
     <ClInclude Include="src\SplineCam\Spline\Spline.h" />
     <ClInclude Include="src\SplineCam\States\FollowSplineState.h" />
