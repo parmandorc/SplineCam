@@ -90,7 +90,7 @@ protected:
 		InitCubes();
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 1.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Init(glm::vec3(0.0f, 1.0f, -15.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 		
 		// init spline
 		spline.Init(std::vector<glm::vec3>({
@@ -198,7 +198,7 @@ protected:
 	void DrawAnimatedPoint() {
 		// build modelViewProjection matrix
 		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 7.0f, 5.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
 		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
 
 		// use the shader
