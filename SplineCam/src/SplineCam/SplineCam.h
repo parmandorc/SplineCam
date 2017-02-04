@@ -68,7 +68,7 @@ protected:
 		InitCubes();
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 1.0f, 10.0f), glm::vec3(0.0f, 0.0f, -10.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Init(glm::vec3(0.0f, 1.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 	}
 		
 	void InitVBO()
@@ -105,21 +105,21 @@ protected:
 	void InitCubes()
 	{
 		// floor
-		cubes[0].pos = glm::vec3(0.0f, 0.0f, -10.0f);
+		cubes[0].pos = glm::vec3(0.0f, 0.0f, 10.0f);
 		cubes[0].scale = glm::vec3(20.0f, 0.0001f, 20.f);
 		cubes[0].enabled = true;
 
 		// others
-		cubes[1].pos = glm::vec3(0.0f, 1.0f, -10.0f);
+		cubes[1].pos = glm::vec3(0.0f, 1.0f, 10.0f);
 		cubes[1].color = glm::vec4(0.75f, 0.0f, 0.0f, 1.0f);
 		cubes[1].enabled = true;
 
-		cubes[2].pos = glm::vec3(5.0f, 3.5f, -5.0f);
+		cubes[2].pos = glm::vec3(5.0f, 3.5f, 5.0f);
 		cubes[2].scale = glm::vec3(1.0f, 3.5f, 1.0f);
 		cubes[2].color = glm::vec4(0.0f, 0.75f, 0.0f, 1.0f);
 		cubes[2].enabled = true;
 
-		cubes[3].pos = glm::vec3(-10.0f, 3.5f, -20.0f);
+		cubes[3].pos = glm::vec3(-10.0f, 3.5f, 20.0f);
 		cubes[3].scale = glm::vec3(1.0f, 3.5f, 1.0f);
 		cubes[3].color = glm::vec4(0.0f, 0.0f, 0.75f, 1.0f);
 		cubes[3].enabled = true;

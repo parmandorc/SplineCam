@@ -10,13 +10,8 @@ public:
 
 	Camera() {}
 	Camera(const glm::vec3& pos_, const glm::vec3& focusPos_, float fov_, float aspect_, float zNear_, float zFar_)
-		: pos(pos_)
-		, focusPos(focusPos_)
-		, fov(fov_)
-		, aspect(aspect_)
-		, zNear(zNear_)
-		, zFar(zFar_)
 	{
+		Init(pos_, focusPos_, fov_, aspect_, zNear_, zFar_);
 	}
 
 	virtual ~Camera() {}
@@ -29,6 +24,8 @@ public:
 		this->aspect = aspect;
 		this->zNear = zNear;
 		this->zFar = zFar;
+
+		UpdateCameraVectors();
 	}
 		
 	void SetFieldOfView(float fov) { this->fov = fov; }
@@ -42,8 +39,10 @@ public:
 		static const float sensitivity = 0.005f;
 		if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
 		{
-			xAngle += (y - lastMousePos.y) * sensitivity;
-			yAngle += (x - lastMousePos.x) * sensitivity;
+			float newAngleX = (y - lastMousePos.y) * sensitivity;
+			float newAngleY = (x - lastMousePos.x) * sensitivity;
+
+			Rotate(glm::vec3(newAngleX, newAngleY, 0.0f));
 		}
 			
 		lastMousePos = glm::vec2(x, y);
@@ -56,22 +55,22 @@ public:
 
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{
-			Move(glm::vec3(0.0f, 0.0f, -speed));
+			Move(forward * speed);
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_S))
 		{
-			Move(glm::vec3(0.0f, 0.0f, speed));
+			Move(forward * -speed);
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_A))
 		{
-			Move(glm::vec3(-speed, 0.0f, 0.0f));
+			Move(right * -speed);
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_D))
 		{
-			Move(glm::vec3(speed, 0.0f, 0.0f));
+			Move(right * speed);
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_Q))
@@ -86,12 +85,12 @@ public:
 
 		if (Input::isKeyPressed(GLFW_KEY_LEFT))
 		{
-			Rotate(glm::vec3(0.0f, -angle, 0.0f));
+			Rotate(glm::vec3(0.0f, angle, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
 		{
-			Rotate(glm::vec3(0.0f, angle, 0.0f));
+			Rotate(glm::vec3(0.0f, -angle, 0.0f));
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_UP))
@@ -108,7 +107,8 @@ public:
 	glm::mat4 ViewProjectionMatrix() const
 	{
 		glm::mat4 view = glm::mat4();
-		view = glm::rotate(view, yAngle, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(view, xAngle, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::lookAt(pos, pos + focusPos, up);
+		
+		view = glm::lookAt(pos, focusPos, up);
 
 		glm::mat4 projection = glm::perspective(glm::radians(fov), aspect, zNear, zFar);
 		return projection * view;
@@ -117,14 +117,37 @@ public:
 	void Move(const glm::vec3& offset)
 	{
 		pos += offset;
+
+		UpdateCameraVectors();
 	}
 	void Rotate(const glm::vec3& rot)
 	{
 		xAngle += rot.x;
 		yAngle += rot.y;
+
+		UpdateCameraVectors();
 	}
 
 protected:
+
+	void UpdateCameraVectors()
+	{
+		// set the forward vector according to xAngle and yAngle(spherical to cartesian coordinates)
+		forward.x = cosf(xAngle) * sinf(yAngle);
+		forward.y = sinf(xAngle);
+		forward.z = cosf(xAngle) * cosf(yAngle);
+
+		forward = glm::normalize(forward);
+
+		// set the right vector by crossing the forward with the Y axis
+		right = glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		// set the up vector by crossing the forward and right vector
+		up = glm::cross(right, forward);
+
+		// set the new focus position
+		focusPos = pos + forward;
+	}
 
 	float fov = 45.0f; // in degrees
 	float aspect = 1.33f;
@@ -133,8 +156,13 @@ protected:
 
 	glm::vec3 pos;
 	glm::vec3 focusPos;
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	// camera up, forward, right vectors
+	glm::vec3 up;
+	glm::vec3 forward;
+	glm::vec3 right;
+
+	// rotation by euler angles
 	float xAngle = 0.0f;
 	float yAngle = 0.0f;
 
