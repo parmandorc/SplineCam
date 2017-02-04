@@ -23,7 +23,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // only support modern opengl
 
 	// create the window
-	GLFWwindow* window = glfwCreateWindow(800, 600, "SplineCam", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1024, 768, "SplineCam", nullptr, nullptr);
 	if (!window)
 	{
 		std::cerr << "GLFW failed to create the window!" << std::endl;
@@ -40,6 +40,8 @@ int main()
 		return -1;
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
 	// init SplineCam
 	SplineCam splineCam;
 
@@ -49,6 +51,7 @@ int main()
 	glfwSetKeyCallback(window, Input::OnKeyCallback);
 	glfwSetMouseButtonCallback(window, Input::OnMouseButtonCallback);
 	glfwSetScrollCallback(window, Input::OnMouseScrollCallback);
+	glfwSetCursorPosCallback(window, Input::OnMouseMoveCallback);
 
 	// main loop
 	while (!glfwWindowShouldClose(window))
@@ -56,7 +59,7 @@ int main()
 		glfwPollEvents();
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		splineCam.Update();
 		splineCam.Render();

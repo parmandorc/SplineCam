@@ -12,20 +12,7 @@ class SplineCam : public InputListener
 public:
 	SplineCam() 
 	{
-		// init the vertex buffer object
-		InitVBO();
-
-		// init the indeces buffer object
-		InitIBO();
-
-		// init the vertex array object
-		InitVAO();
-
-		// load shader
-		shader.Load("assets/Shaders/basic.vert", "assets/Shaders/basic.frag");
-
-		// init camera
-		camera.Init(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), 70.0f, 800.0f/600.0f, 0.1f, 1000.0f);
+		Init();
 	}
 
 	~SplineCam() 
@@ -45,46 +32,45 @@ public:
 	void OnMouseButtonPressed(int button, double x, double y) override { printf("Mouse button %d pressed at ( %f , %f )\n", button, x, y); };
 	void OnMouseButtonReleased(int button, double x, double y) override { printf("Mouse button %d released at ( %f , %f )\n", button, x, y); };
 	void OnMouseScroll(double xoffset, double yoffset) override { };
+	
+	void OnMouseMove(double x, double y) 
+	{
+		camera.OnMouseMove((float)x, (float)y);
+	}
 
 	void Update() 
 	{
-		UpdateCube();
 		camera.Update();
 	}
 
 	void Render() 
 	{
-		DrawCube();
+		DrawCubes(camera.ViewProjectionMatrix());
 	}
 	
 protected:
 
-	void UpdateCube()
+	void Init()
 	{
-		static const float speed = 0.0005f;
-		if (Input::isKeyPressed(GLFW_KEY_UP))
-		{
-			cubePos.y += speed;
-		}
+		// init the vertex buffer object
+		InitVBO();
 
-		if (Input::isKeyPressed(GLFW_KEY_DOWN))
-		{
-			cubePos.y -= speed;
-		}
+		// init the indeces buffer object
+		InitIBO();
 
-		if (Input::isKeyPressed(GLFW_KEY_LEFT))
-		{
-			cubePos.x -= speed;
-		}
+		// init the vertex array object
+		InitVAO();
 
-		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
-		{
-			cubePos.x += speed;
-		}
+		// load shader
+		shader.Load("assets/Shaders/basic.vert", "assets/Shaders/basic.frag");
 
-		cubeRotY += 0.0005f;
+		// init cubes
+		InitCubes();
+
+		// init camera
+		camera.Init(glm::vec3(0.0f, 1.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 	}
-
+		
 	void InitVBO()
 	{
 		// create one buffer in the GPU, use it as an array buffer and set the data
@@ -116,24 +102,51 @@ protected:
 		glEnableVertexAttribArray(0);
 	}
 
-	void DrawCube()
+	void InitCubes()
 	{
-		// build modelViewProjection matrix
-		glm::mat4 model;
-		model = glm::translate(model, cubePos) * glm::rotate(model, cubeRotY, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
-		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
+		// floor
+		cubes[0].pos = glm::vec3(0.0f, 0.0f, 10.0f);
+		cubes[0].scale = glm::vec3(20.0f, 0.0001f, 20.f);
+		cubes[0].enabled = true;
 
+		// others
+		cubes[1].pos = glm::vec3(0.0f, 1.0f, 10.0f);
+		cubes[1].color = glm::vec4(0.75f, 0.0f, 0.0f, 1.0f);
+		cubes[1].enabled = true;
+
+		cubes[2].pos = glm::vec3(5.0f, 3.5f, 5.0f);
+		cubes[2].scale = glm::vec3(1.0f, 3.5f, 1.0f);
+		cubes[2].color = glm::vec4(0.0f, 0.75f, 0.0f, 1.0f);
+		cubes[2].enabled = true;
+
+		cubes[3].pos = glm::vec3(-10.0f, 3.5f, 20.0f);
+		cubes[3].scale = glm::vec3(1.0f, 3.5f, 1.0f);
+		cubes[3].color = glm::vec4(0.0f, 0.0f, 0.75f, 1.0f);
+		cubes[3].enabled = true;
+
+	}
+
+	void DrawCubes(const glm::mat4& viewProjection)
+	{
 		// use the shader
-		shader.Use();
-
-		// set uniforms
-		shader.SetUniform("modelViewProjection", modelViewProjection);
+		shader.Use();	
 
 		// tell the vertexArrayObject to be used
 		glBindVertexArray(vertexArrayObject);
 
-		// tell to draw triangles by using the IBO
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
+		glm::mat4 model;
+		for (int i = 0; i < NUM_CUBES; i++)
+		{
+			Cube cube = cubes[i];
+			if (cube.enabled)
+			{
+				model = glm::mat4();
+				model = glm::translate(model, cube.pos) * glm::scale(model, cube.scale);
+				shader.SetUniform("modelViewProjection", viewProjection * model);
+				shader.SetUniform("color", cube.color);
+				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices); // tell to draw cube by using the IBO
+			}
+		}
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
@@ -189,9 +202,18 @@ private:
 	// shader
 	Shader shader;
 
-	// cubePos
-	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, -10.0f);
-	float cubeRotY = 0.0f;
+	// cubes
+	struct Cube
+	{
+		bool enabled = false;
+
+		glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	};
+
+	static const int NUM_CUBES = 1024;
+	Cube cubes[NUM_CUBES];
 
 	// camera
 	Camera camera;
