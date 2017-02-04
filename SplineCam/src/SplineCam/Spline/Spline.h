@@ -22,17 +22,13 @@ public:
 		CalculateSplinePoints();
 	}
 
-	void Render(glm::mat4 viewProjectionMatrix, Shader shader) {
-		// build modelViewProjection matrix
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, 7.0f, 5.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
-		glm::mat4 modelViewProjection = viewProjectionMatrix * model;
-
+	void Render(glm::mat4 viewProjectionMatrix, Shader shader) 
+	{
 		// use the shader
 		shader.Use();
 
 		// set uniforms
-		shader.SetUniform("modelViewProjection", modelViewProjection);
+		shader.SetUniform("modelViewProjection", viewProjectionMatrix);
 
 		// draw the spline curve
 		std::vector<glm::vec3> splinePoints = GetSplinePoints();

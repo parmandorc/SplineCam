@@ -186,6 +186,10 @@
     <ClInclude Include="src\SplineCam\Camera\Camera.h" />
     <ClInclude Include="src\SplineCam\SplineCam.h" />
     <ClInclude Include="src\SplineCam\Spline\Spline.h" />
+    <ClInclude Include="src\SplineCam\States\FollowSplineState.h" />
+    <ClInclude Include="src\SplineCam\States\FreeCamState.h" />
+    <ClInclude Include="src\SplineCam\States\SplineCamState.h" />
+    <ClInclude Include="src\SplineCam\States\SplineEditorState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag" />

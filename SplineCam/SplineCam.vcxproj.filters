@@ -52,6 +52,9 @@
     <Filter Include="Source Files\src\SplineCam\Spline">
       <UniqueIdentifier>{9427b2f5-dd4b-4ad8-89ae-a195b5afa067}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\SplineCam\States">
+      <UniqueIdentifier>{ac360475-7f4b-4995-8864-b1b3582b33a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -160,6 +163,21 @@
     </ClInclude>
     <ClInclude Include="src\SplineCam\Spline\Spline.h">
       <Filter>Source Files\src\SplineCam\Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="Spline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\States\SplineCamState.h">
+      <Filter>Source Files\src\SplineCam\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\States\SplineEditorState.h">
+      <Filter>Source Files\src\SplineCam\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\States\FreeCamState.h">
+      <Filter>Source Files\src\SplineCam\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\States\FollowSplineState.h">
+      <Filter>Source Files\src\SplineCam\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
