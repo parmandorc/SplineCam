@@ -75,12 +75,12 @@ public:
 
 		if (Input::isKeyPressed(GLFW_KEY_Q))
 		{
-			Move(glm::vec3(0.0f, speed, 0.0f));
+			Move(up * speed);
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_E))
 		{
-			Move(glm::vec3(0.0f, -speed, 0.0f));
+			Move(up * speed);
 		}
 
 		if (Input::isKeyPressed(GLFW_KEY_LEFT))
