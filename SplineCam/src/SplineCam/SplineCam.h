@@ -6,6 +6,7 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "Camera/Camera.h"
+#include "Spline/Spline.h"
 
 class SplineCam : public InputListener
 {
@@ -22,9 +23,25 @@ public:
 
 	void OnKeyPressed(int key) override 
 	{
-		if (key == GLFW_KEY_F1)
+		switch(key)
 		{
-			ToggleWireframeMode();
+			case GLFW_KEY_F1:
+				ToggleWireframeMode();
+				break;
+
+			case GLFW_KEY_TAB:
+				if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+					spline.PreviousControlPoint();
+				else
+					spline.NextControlPoint();
+				break;
+
+			case GLFW_KEY_SPACE:
+				if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+					spline.DeleteControlPoint();
+				else
+					spline.CreateControlPoint();
+				break;
 		}
 	};
 
@@ -41,11 +58,16 @@ public:
 	void Update() 
 	{
 		camera.Update();
+		UpdateSpline();
+
+		animationFrame = fmodf(animationFrame + 0.00025f, 1);
 	}
 
 	void Render() 
 	{
 		DrawCubes(camera.ViewProjectionMatrix());
+		spline.Render(camera.ViewProjectionMatrix(), shader);
+		DrawAnimatedPoint();
 	}
 	
 protected:
@@ -69,6 +91,15 @@ protected:
 
 		// init camera
 		camera.Init(glm::vec3(0.0f, 1.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		
+		// init spline
+		spline.Init(std::vector<glm::vec3>({
+			glm::vec3(-5.0f, -7.5f, 0.0f),
+			glm::vec3(-7.5f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 3.0f, 0.0f),
+			glm::vec3(7.5f, 0.0f, 0.0f),
+			glm::vec3(5.0f, -7.5f, 0.0f),
+		}));
 	}
 		
 	void InitVBO()
@@ -125,6 +156,18 @@ protected:
 		cubes[3].enabled = true;
 
 	}
+	
+	void UpdateSpline() {
+		static const float speed = 0.01f;
+		if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+			int x = Input::isKeyPressed(GLFW_KEY_D) - Input::isKeyPressed(GLFW_KEY_A);
+			int y = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);
+			int z = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
+			if (x != 0 || y != 0 || z != 0) {
+				spline.TranslateControlPoint(glm::vec3(x, y, z) * speed);
+			}
+		}
+	}
 
 	void DrawCubes(const glm::mat4& viewProjection)
 	{
@@ -150,6 +193,31 @@ protected:
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
+	}
+
+	void DrawAnimatedPoint() {
+		// build modelViewProjection matrix
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 modelViewProjection = camera.ViewProjectionMatrix() * model;
+
+		// use the shader
+		shader.Use();
+
+		// set uniforms
+		shader.SetUniform("modelViewProjection", modelViewProjection);
+
+		// draw the control points
+		glm::vec3 point = spline.GetPoint(animationFrame);
+		glm::vec3 tangent = spline.GetTangent(animationFrame);
+		glPointSize(10.0f);
+		glBegin(GL_POINTS);
+		glVertex3f(point.x, point.y, point.z);
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3f(point.x, point.y, point.z);
+		glVertex3f(point.x + tangent.x, point.y + tangent.y, point.z + tangent.z);
+		glEnd();
 	}
 
 	void Terminate()
@@ -215,8 +283,14 @@ private:
 	static const int NUM_CUBES = 1024;
 	Cube cubes[NUM_CUBES];
 
+	// animatedPoint
+	float animationFrame = 0.0f;
+
 	// camera
 	Camera camera;
+
+	// spline
+	Spline spline;
 
 	bool wireframeMode = false;
 };

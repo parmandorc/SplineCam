@@ -49,6 +49,9 @@
     <Filter Include="Source Files\src\SplineCam\Camera">
       <UniqueIdentifier>{e18590b8-f2c3-42ab-beb9-bf97d13c5d8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\SplineCam\Spline">
+      <UniqueIdentifier>{9427b2f5-dd4b-4ad8-89ae-a195b5afa067}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="src\SplineCam\Camera\Camera.h">
       <Filter>Source Files\src\SplineCam\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineCam\Spline\Spline.h">
+      <Filter>Source Files\src\SplineCam\Spline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
