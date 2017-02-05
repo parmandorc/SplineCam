@@ -16,11 +16,14 @@ public:
 
 	virtual ~Spline() {}
 
-	void Init(const std::vector<glm::vec3>& controlPoints_, float adaptiveSamplingDetailThreshold_ = 0.075f)
+	void Init(const std::vector<glm::vec3>& controlPoints_, 
+		float adaptiveSamplingDetailAngleThreshold_ = 0.075f,
+		float adaptiveSamplingDetailDistanceThreshold_ = 1.0f)
 	{
 		this->controlPoints = controlPoints_;
 		this->selectedControlPoint = 0;
-		this->adaptiveSamplingDetailThreshold = adaptiveSamplingDetailThreshold_;
+		this->adaptiveSamplingDetailAngleThreshold = adaptiveSamplingDetailAngleThreshold_;
+		this->adaptiveSamplingDetailDistanceThreshold = adaptiveSamplingDetailDistanceThreshold_;
 		this->maximumSamplingDetail = 0.001f;
 
 		CalculateSplinePoints();
@@ -124,24 +127,31 @@ protected:
 			controlPoints[i + 2 < n ? i + 2 : n] * ((3 * t * t) / 6));
 	}
 
-	std::vector<glm::vec3> CalculateRecursiveSubdivision(int i, float t0, float t1, glm::vec3 m0, glm::vec3 m1) {
+	std::vector<glm::vec3> CalculateRecursiveSubdivision(int i, float t0, float t1, glm::vec3 x0, glm::vec3 x1, glm::vec3 m0, glm::vec3 m1) {
+		if (t1 - t0 < maximumSamplingDetail) { // Avoid infinite recursion
+			return std::vector<glm::vec3>();
+		}
+
 		float t = (t0 + t1) * 0.5f;
+		glm::vec3 x = GetPoint(t, i);
 		glm::vec3 m = GetTangent(t, i);
 
 		// Curve is consider a line when the tangent in the middle point is practically the same as the tangents in both extremes
 		// This works because only one inflection point maximum will exist inside a bspline section.
 		// Hence, if the middle point's tangent is aligned with its extreme, it has to be a line. 
 		// If it was a more complex curve, there would have to be more than one inflection point.
-		if (t1 - t0 < maximumSamplingDetail || // Avoid infinite recursion
-			(glm::acos(glm::clamp(glm::dot(m0, m), -1.0f, 1.0f)) < adaptiveSamplingDetailThreshold &&
-				glm::acos(glm::clamp(glm::dot(m1, m), -1.0f, 1.0f)) < adaptiveSamplingDetailThreshold)) {
+		if (glm::acos(glm::clamp(glm::dot(m0, m), -1.0f, 1.0f)) < adaptiveSamplingDetailAngleThreshold &&
+				glm::acos(glm::clamp(glm::dot(m1, m), -1.0f, 1.0f)) < adaptiveSamplingDetailAngleThreshold) {
 
-			return std::vector<glm::vec3>();
+			// Extra text for long almost straight lines
+			if (glm::distance(x, x0 + (x1 - x0) * glm::dot(x - x0, x1 - x0)) < adaptiveSamplingDetailDistanceThreshold) {
+				return std::vector<glm::vec3>();
+			}
 		}
 
 		std::vector<glm::vec3> result, pre, post;
-		pre = CalculateRecursiveSubdivision(i, t0, t, m0, m);
-		post = CalculateRecursiveSubdivision(i, t, t1, m, m1);
+		pre = CalculateRecursiveSubdivision(i, t0, t, x0, x, m0, m);
+		post = CalculateRecursiveSubdivision(i, t, t1, x, x1, m, m1);
 		result.insert(result.end(), pre.begin(), pre.end());
 		result.push_back(GetPoint(t, i));
 		result.insert(result.end(), post.begin(), post.end());
@@ -156,10 +166,12 @@ protected:
 		for (int i = 0; i <= n; i++) {
 			std::vector<glm::vec3> section, result;
 
-			section.push_back(GetPoint(0.0f, i));
-			result = CalculateRecursiveSubdivision(i, 0.0f, 1.0f, GetTangent(0.0f, i), GetTangent(1.0f, i));
+			glm::vec3 x0 = GetPoint(0.0f, i);
+			glm::vec3 x1 = GetPoint(1.0f, i);
+			section.push_back(x0);
+			result = CalculateRecursiveSubdivision(i, 0.0f, 1.0f, x0, x1, GetTangent(0.0f, i), GetTangent(1.0f, i));
 			section.insert(section.end(), result.begin(), result.end());
-			section.push_back(GetPoint(1.0f, i));
+			section.push_back(x1);
 			splineSections.push_back(section);
 
 			printf("%d: %d\n", i, section.size());
@@ -186,8 +198,13 @@ protected:
 	// Transformations will be performed to this point.
 	unsigned int selectedControlPoint;
 
-	// This parameter controls the level of detail of the curve in adaptive sampling
-	float adaptiveSamplingDetailThreshold;
+	// This parameter controls the level of detail of the curve in adaptive sampling,
+	//	in the maximum angle difference allowed between tangents
+	float adaptiveSamplingDetailAngleThreshold;
+
+	// This parameter controls the level of detail of the curve in adaptive sampling,
+	//	in the maximum distance allowed between a point and the curve.
+	float adaptiveSamplingDetailDistanceThreshold;
 
 	// This parameter controls the maximum depth of the recursion in the adaptive sampling.
 	// This shouldn't be used to control quality of the curve.
