@@ -85,6 +85,12 @@ public:
 		glUniform3f(location, v.x, v.y, v.z);
 	}
 
+	void SetUniform(GLchar* name, const glm::vec4& v)
+	{
+		GLint location = GetUniformLocation(name);
+		glUniform4f(location, v.x, v.y, v.z, v.w);
+	}
+
 	void SetUniform(GLchar* name, const glm::mat4& mat4)
 	{
 		GLint location = GetUniformLocation(name);

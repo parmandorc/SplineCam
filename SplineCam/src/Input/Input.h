@@ -11,7 +11,8 @@ public:
 	virtual void OnKeyReleased(int key) {};
 	virtual void OnMouseButtonPressed(int button, double x, double y) {};
 	virtual void OnMouseButtonReleased(int button, double x, double y) {};
-	virtual void OnMouseScroll(double xoffset, double yoffset) {};
+	virtual void OnMouseScroll(double xOffset, double yOffset) {};
+	virtual void OnMouseMove(double x, double y) {};
 };
 
 // Input class
@@ -55,6 +56,11 @@ public:
 
 	// Mouse events 
 
+	static bool isMouseButtonPressed(int button)
+	{
+		return (glfwGetMouseButton(s_window, button) == GLFW_PRESS);
+	}
+
 	static void OnMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
 		double x, y;
@@ -70,9 +76,14 @@ public:
 		}
 	}
 
-	static void OnMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	static void OnMouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 	{
-		s_listener->OnMouseScroll(xoffset, yoffset);
+		s_listener->OnMouseScroll(xOffset, yOffset);
+	}
+
+	static void OnMouseMoveCallback(GLFWwindow* window, double x, double y)
+	{
+		s_listener->OnMouseMove(x, y);
 	}
 };
 
