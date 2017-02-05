@@ -16,9 +16,13 @@ public:
 
 	virtual ~Spline() {}
 
-	void Init(const std::vector<glm::vec3>& controlPoints_)
+	void Init(const std::vector<glm::vec3>& controlPoints_, float adaptiveSamplingDetailThreshold_ = 0.075f)
 	{
 		this->controlPoints = controlPoints_;
+		this->selectedControlPoint = 0;
+		this->adaptiveSamplingDetailThreshold = adaptiveSamplingDetailThreshold_;
+		this->maximumSamplingDetail = 0.001f;
+
 		CalculateSplinePoints();
 	}
 
@@ -110,9 +114,10 @@ protected:
 		// This works because only one inflection point maximum will exist inside a bspline section.
 		// Hence, if the middle point's tangent is aligned with its extreme, it has to be a line. 
 		// If it was a more complex curve, there would have to be more than one inflection point.
-		if (t1 - t0 < 0.001f || // Avoid infinite recursion
-			(glm::acos(glm::clamp(glm::dot(m0, m), -1.0f, 1.0f)) < 0.05f && 
-				glm::acos(glm::clamp(glm::dot(m1, m), -1.0f, 1.0f)) < 0.05f)) {
+		if (t1 - t0 < maximumSamplingDetail || // Avoid infinite recursion
+			(glm::acos(glm::clamp(glm::dot(m0, m), -1.0f, 1.0f)) < adaptiveSamplingDetailThreshold &&
+				glm::acos(glm::clamp(glm::dot(m1, m), -1.0f, 1.0f)) < adaptiveSamplingDetailThreshold)) {
+
 			return std::vector<glm::vec3>();
 		}
 
@@ -159,7 +164,17 @@ protected:
 	// The computed points that draw the spline
 	std::vector<std::vector<glm::vec3>> splineSections;
 
-	unsigned int selectedControlPoint = 0;
+	// Index to the currently selected control point.
+	// Transformations will be performed to this point.
+	unsigned int selectedControlPoint;
+
+	// This parameter controls the level of detail of the curve in adaptive sampling
+	float adaptiveSamplingDetailThreshold;
+
+	// This parameter controls the maximum depth of the recursion in the adaptive sampling.
+	// This shouldn't be used to control quality of the curve.
+	// It is recommended to keep its default value, unless the program crashes for memory allocation issues.
+	float maximumSamplingDetail;
 };
 
 #endif
