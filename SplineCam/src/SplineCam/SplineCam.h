@@ -5,6 +5,8 @@
 #include "../Shaders/Shader.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/quaternion.hpp"
 #include "Camera/FollowSplineCamera.h"
 #include "Camera/FPSCamera.h"
 #include "Camera/FreeCamera.h"
