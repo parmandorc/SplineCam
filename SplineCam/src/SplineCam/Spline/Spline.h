@@ -96,10 +96,33 @@ protected:
 
 	glm::vec3 GetTangent(float t, int i) {
 		int n = controlPoints.size() - 1;
-		return controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-3 * t * t + 6 * t - 3) / 6) +
+		return glm::normalize(controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-3 * t * t + 6 * t - 3) / 6) +
 			controlPoints[i] * ((9 * t * t - 12 * t) / 6) +
 			controlPoints[i + 1 < n ? i + 1 : n] * ((-9 * t * t + 6 * t + 3) / 6) +
-			controlPoints[i + 2 < n ? i + 2 : n] * ((3 * t * t) / 6);
+			controlPoints[i + 2 < n ? i + 2 : n] * ((3 * t * t) / 6));
+	}
+
+	std::vector<glm::vec3> CalculateRecursiveSubdivision(int i, float t0, float t1, glm::vec3 m0, glm::vec3 m1) {
+		float t = (t0 + t1) * 0.5f;
+		glm::vec3 m = GetTangent(t, i);
+
+		// Curve is consider a line when the tangent in the middle point is practically the same as the tangents in both extremes
+		// This works because only one inflection point maximum will exist inside a bspline section.
+		// Hence, if the middle point's tangent is aligned with its extreme, it has to be a line. 
+		// If it was a more complex curve, there would have to be more than one inflection point.
+		if (t1 - t0 < 0.001f || // Avoid infinite recursion
+			(glm::acos(glm::clamp(glm::dot(m0, m), -1.0f, 1.0f)) < 0.05f && 
+				glm::acos(glm::clamp(glm::dot(m1, m), -1.0f, 1.0f)) < 0.05f)) {
+			return std::vector<glm::vec3>();
+		}
+
+		std::vector<glm::vec3> result, pre, post;
+		pre = CalculateRecursiveSubdivision(i, t0, t, m0, m);
+		post = CalculateRecursiveSubdivision(i, t, t1, m, m1);
+		result.insert(result.end(), pre.begin(), pre.end());
+		result.push_back(GetPoint(t, i));
+		result.insert(result.end(), post.begin(), post.end());
+		return result;
 	}
 
 	void CalculateSplinePoints() {
@@ -108,11 +131,15 @@ protected:
 		const float step = 0.025f;
 
 		for (int i = 0; i <= n; i++) {
-			std::vector<glm::vec3> splineSection;
-			for (float t = step; t < 1.0f; t += step) {
-				splineSection.push_back(GetPoint(t, i));
-			}
-			splineSections.push_back(splineSection);
+			std::vector<glm::vec3> section, result;
+
+			section.push_back(GetPoint(0.0f, i));
+			result = CalculateRecursiveSubdivision(i, 0.0f, 1.0f, GetTangent(0.0f, i), GetTangent(1.0f, i));
+			section.insert(section.end(), result.begin(), result.end());
+			section.push_back(GetPoint(1.0f, i));
+			splineSections.push_back(section);
+
+			printf("%d: %d\n", i, section.size());
 		}
 	}
 
