@@ -48,7 +48,12 @@ public:
 			else
 				spline.CreateControlPoint();
 			break;
+
+		case GLFW_KEY_F2:
+			spline.ToggleDebugPoints();
+			break;
 		}
+
 	};
 	void Update() override
 	{

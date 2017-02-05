@@ -25,6 +25,7 @@ public:
 		this->adaptiveSamplingDetailAngleThreshold = adaptiveSamplingDetailAngleThreshold_;
 		this->adaptiveSamplingDetailDistanceThreshold = adaptiveSamplingDetailDistanceThreshold_;
 		this->maximumSamplingDetail = 0.001f;
+		this->drawDebugPoints = false;
 
 		CalculateSplinePoints();
 	}
@@ -54,7 +55,7 @@ public:
 		glEnd();
 
 		// draw the control points
-		shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		glPointSize(10.0f);
 		glBegin(GL_POINTS);
 		for (unsigned int i = 0; i < controlPoints.size(); i++) {
@@ -71,6 +72,17 @@ public:
 			glVertex3f(controlPoints[i + 1].x, controlPoints[i + 1].y, controlPoints[i + 1].z);
 		}
 		glEnd();
+
+		if (drawDebugPoints) {
+			// draw the control points
+			shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			glPointSize(3.0f);
+			glBegin(GL_POINTS);
+			for (unsigned int i = 0; i < splinePoints.size(); i++) {
+				glVertex3f(splinePoints[i].x, splinePoints[i].y, splinePoints[i].z);
+			}
+			glEnd();
+		}
 	}
 
 	// Returns the value of the spline for the given value of the parameter t [0, 1]
@@ -107,6 +119,8 @@ public:
 			CalculateSplinePoints();
 		}
 	}
+
+	void ToggleDebugPoints() { drawDebugPoints = !drawDebugPoints; }
 
 protected:
 
@@ -210,6 +224,9 @@ protected:
 	// This shouldn't be used to control quality of the curve.
 	// It is recommended to keep its default value, unless the program crashes for memory allocation issues.
 	float maximumSamplingDetail;
+
+	// Whether to explicitly draw the points that are used to render the spline
+	bool drawDebugPoints;
 };
 
 #endif
