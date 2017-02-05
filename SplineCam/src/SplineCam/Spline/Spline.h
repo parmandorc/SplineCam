@@ -35,6 +35,7 @@ public:
 		shader.SetUniform("modelViewProjection", viewProjectionMatrix);
 
 		// draw the spline curve
+		shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		std::vector<glm::vec3> splinePoints = GetSplinePoints();
 		glBegin(GL_LINES);
 		for (unsigned int i = 0; i < splinePoints.size() - 1; i++) {
@@ -43,11 +44,28 @@ public:
 		}
 		glEnd();
 
+		// draw selected control point
+		shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+		glBegin(GL_POINTS);
+		glVertex3f(controlPoints[selectedControlPoint].x, controlPoints[selectedControlPoint].y, controlPoints[selectedControlPoint].z);
+		glEnd();
+
 		// draw the control points
+		shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		glPointSize(10.0f);
 		glBegin(GL_POINTS);
-		for (glm::vec3 c : controlPoints) {
-			glVertex3f(c.x, c.y, c.z);
+		for (unsigned int i = 0; i < controlPoints.size(); i++) {
+			if (i != selectedControlPoint)
+				glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
+		}
+		glEnd();
+
+		// draw lines between control points
+		shader.SetUniform("color", glm::vec4(0.67f, 0.67f, 0.67f, 1.0f));
+		glBegin(GL_LINES);
+		for (unsigned int i = 0; i < controlPoints.size() - 1; i++) {
+			glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
+			glVertex3f(controlPoints[i + 1].x, controlPoints[i + 1].y, controlPoints[i + 1].z);
 		}
 		glEnd();
 	}

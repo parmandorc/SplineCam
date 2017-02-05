@@ -88,6 +88,7 @@ protected:
 
 		// set uniforms
 		shader.SetUniform("modelViewProjection", camera.ViewProjectionMatrix());
+		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		// draw the control points
 		glm::vec3 point = spline.GetPoint(animationFrame);
