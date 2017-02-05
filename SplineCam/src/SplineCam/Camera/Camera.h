@@ -5,16 +5,10 @@
 
 class Camera
 {
-
 public:
-
-	Camera() {}
-	Camera(const glm::vec3& pos_, const glm::vec3& focusPos_, float fov_, float aspect_, float zNear_, float zFar_)
-	{
-		Init(pos_, focusPos_, fov_, aspect_, zNear_, zFar_);
-	}
-
 	virtual ~Camera() {}
+	virtual void OnMouseMove(float x, float y){}
+	virtual void Update(){}
 
 	void Init(const glm::vec3& pos, const glm::vec3& focusPos, float fov, float aspect, float zNear, float zFar)
 	{
@@ -27,83 +21,7 @@ public:
 
 		UpdateCameraVectors();
 	}
-		
-	void SetFieldOfView(float fov) { this->fov = fov; }
-	void SetAspect(float aspect) { this->aspect = aspect; }
-	void SetZNear(float zNear) { this->zNear = zNear; }
-	void SetZFar(float zFar) { this->zFar = zFar; }
 	
-	void OnMouseMove(float x, float y)
-	{
-		static glm::vec2 lastMousePos = glm::vec2(0.0f, 0.0f);
-		static const float sensitivity = 0.005f;
-		if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-		{
-			float newAngleX = (y - lastMousePos.y) * sensitivity;
-			float newAngleY = (x - lastMousePos.x) * sensitivity;
-
-			Rotate(glm::vec3(newAngleX, newAngleY, 0.0f));
-		}
-			
-		lastMousePos = glm::vec2(x, y);
-	}
-
-	void Update()
-	{
-		static const float speed = 0.01f;
-		static const float angle = 0.001f;
-
-		if (Input::isKeyPressed(GLFW_KEY_W))
-		{
-			Move(forward * speed);
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_S))
-		{
-			Move(forward * -speed);
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_A))
-		{
-			Move(right * -speed);
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_D))
-		{
-			Move(right * speed);
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_Q))
-		{
-			Move(up * speed);
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_E))
-		{
-			Move(up * speed);
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_LEFT))
-		{
-			Rotate(glm::vec3(0.0f, angle, 0.0f));
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_RIGHT))
-		{
-			Rotate(glm::vec3(0.0f, -angle, 0.0f));
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_UP))
-		{
-			Rotate(glm::vec3(angle, 0.0f, 0.0f));
-		}
-
-		if (Input::isKeyPressed(GLFW_KEY_DOWN))
-		{
-			Rotate(glm::vec3(-angle, 0.0f, 0.0f));
-		}
-	}
-
 	glm::mat4 ViewProjectionMatrix() const
 	{
 		glm::mat4 view = glm::mat4();
@@ -129,6 +47,7 @@ public:
 	}
 
 protected:
+	Camera() {}
 
 	void UpdateCameraVectors()
 	{
@@ -165,7 +84,6 @@ protected:
 	// rotation by euler angles
 	float xAngle = 0.0f;
 	float yAngle = 0.0f;
-
 };
 
 #endif

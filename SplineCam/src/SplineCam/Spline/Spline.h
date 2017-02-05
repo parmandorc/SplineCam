@@ -22,17 +22,13 @@ public:
 		CalculateSplinePoints();
 	}
 
-	void Render(glm::mat4 viewProjectionMatrix, Shader shader) {
-		// build modelViewProjection matrix
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, 7.0f, 5.0f)) * glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
-		glm::mat4 modelViewProjection = viewProjectionMatrix * model;
-
+	void Render(glm::mat4 viewProjectionMatrix, Shader shader) 
+	{
 		// use the shader
 		shader.Use();
 
 		// set uniforms
-		shader.SetUniform("modelViewProjection", modelViewProjection);
+		shader.SetUniform("modelViewProjection", viewProjectionMatrix);
 
 		// draw the spline curve
 		std::vector<glm::vec3> splinePoints = GetSplinePoints();
@@ -53,7 +49,7 @@ public:
 	}
 
 	// Returns the value of the spline for the given value of the parameter t [0, 1]
-	glm::vec3 GetPoint(float t) {
+	glm::vec3 GetPoint(float t) const {
 		t = t < 0 ? 0 : t > 1 ? 1 : t;
 		t *= controlPoints.size() - 1;
 		int i = (int)t;
@@ -90,7 +86,7 @@ public:
 protected:
 
 	// Calculates the value of the i-th spline section for the given value of the parameter t [0, 1]
-	glm::vec3 GetPoint(float t, int i) {
+	glm::vec3 GetPoint(float t, int i) const {
 		int n = controlPoints.size() - 1;
 		return controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-t * t * t + 3 * t * t - 3 * t + 1) / 6) +
 			controlPoints[i] * ((3 * t * t * t - 6 * t * t + 4) / 6) +
