@@ -49,7 +49,7 @@ public:
 protected:
 	Camera() {}
 
-	void UpdateCameraVectors()
+	virtual void UpdateCameraVectors()
 	{
 		// set the forward vector according to xAngle and yAngle(spherical to cartesian coordinates)
 		forward.x = cosf(xAngle) * sinf(yAngle);
