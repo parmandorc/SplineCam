@@ -56,7 +56,7 @@ public:
 		return GetPoint(t - i, i);
 	}
 	
-	glm::vec3 GetTangent(float t) {
+	glm::vec3 GetTangent(float t) const {
 		t = t < 0 ? 0 : t > 1 ? 1 : t;
 		t *= controlPoints.size() - 1;
 		int i = (int)t;
@@ -94,7 +94,7 @@ protected:
 			controlPoints[i + 2 < n ? i + 2 : n] * ((t * t * t) / 6);
 	}
 
-	glm::vec3 GetTangent(float t, int i) {
+	glm::vec3 GetTangent(float t, int i) const {
 		int n = controlPoints.size() - 1;
 		return controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-3 * t * t + 6 * t - 3) / 6) +
 			controlPoints[i] * ((9 * t * t - 12 * t) / 6) +

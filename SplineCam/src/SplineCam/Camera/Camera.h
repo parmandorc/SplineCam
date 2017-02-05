@@ -19,7 +19,7 @@ public:
 		this->zNear = zNear;
 		this->zFar = zFar;
 
-		UpdateCameraVectors();
+		Rotate(eulerAngles);
 	}
 	
 	glm::mat4 ViewProjectionMatrix() const
@@ -38,10 +38,33 @@ public:
 
 		UpdateCameraVectors();
 	}
-	void Rotate(const glm::vec3& rot)
+	void Rotate(const glm::vec3& angles)
 	{
-		xAngle += rot.x;
-		yAngle += rot.y;
+		this->eulerAngles += angles;
+
+		// set the forward vector according to eulerAngles(spherical to cartesian coordinates)
+		forward.x = cosf(eulerAngles.x) * sinf(eulerAngles.y);
+		forward.y = sinf(eulerAngles.x);
+		forward.z = cosf(eulerAngles.x) * cosf(eulerAngles.y);
+
+		UpdateCameraVectors();
+	}
+
+	void RotateAroundAxis(const glm::vec3& axis, float angle)
+	{
+		// quaternion that defines a rotation around axis
+		glm::quat rotQuaternion = glm::angleAxis(angle, axis);
+		
+		// forward quaternion
+		glm::quat forwardQuaternion = glm::quat(0, forward.x, forward.y, forward.z);
+
+		// rotate 
+		glm::quat newForwardQuaternion = (rotQuaternion * forwardQuaternion) * glm::conjugate(rotQuaternion);
+		
+		// set the new forward vector
+		forward.x = newForwardQuaternion.x;
+		forward.y = newForwardQuaternion.y;
+		forward.z = newForwardQuaternion.z;
 
 		UpdateCameraVectors();
 	}
@@ -49,13 +72,9 @@ public:
 protected:
 	Camera() {}
 
-	void UpdateCameraVectors()
+	virtual void UpdateCameraVectors()
 	{
-		// set the forward vector according to xAngle and yAngle(spherical to cartesian coordinates)
-		forward.x = cosf(xAngle) * sinf(yAngle);
-		forward.y = sinf(xAngle);
-		forward.z = cosf(xAngle) * cosf(yAngle);
-
+		// normalize forward vector
 		forward = glm::normalize(forward);
 
 		// set the right vector by crossing the forward with the Y axis
@@ -82,8 +101,7 @@ protected:
 	glm::vec3 right;
 
 	// rotation by euler angles
-	float xAngle = 0.0f;
-	float yAngle = 0.0f;
+	glm::vec3 eulerAngles;
 };
 
 #endif

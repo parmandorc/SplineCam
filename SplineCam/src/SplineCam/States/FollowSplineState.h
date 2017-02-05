@@ -20,11 +20,8 @@ public:
 			glm::vec3(-2.6f, 1.0f, 3.5f)
 		}));
 
-
-
 		// init camera
-		camera.Init(spline.GetPoint(0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
-		camera.SetSpline(&spline);
+		camera.Init(&spline, 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 	}
 
 	void Stop() override
