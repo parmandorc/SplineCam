@@ -26,6 +26,13 @@ public:
 				glm::vec3(-11.0f, 1.0f, -2.0f),
 				glm::vec3(-11.0f, 1.0f, 3.5f),
 				glm::vec3(-2.6f, 1.0f, 3.5f)
+			}),
+				std::vector<glm::vec3>({
+				glm::vec3(),
+				glm::vec3(1.0f, 0.5f, 1.0f),
+				glm::vec3(0.0f, 0.0f, 1.0f),
+				glm::vec3(0.0f, -0.25f, 1.0f),
+				glm::vec3()
 			}));
 		}
 	}
@@ -53,6 +60,11 @@ public:
 				spline->DeleteControlPoint();
 			else
 				spline->CreateControlPoint();
+			break;
+
+		case GLFW_KEY_BACKSPACE:
+			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+				spline->DeleteCustomOrientation();
 			break;
 
 		case GLFW_KEY_F2:
@@ -88,6 +100,13 @@ protected:
 			if (x != 0 || y != 0 || z != 0) 
 			{
 				spline->TranslateControlPoint(glm::vec3(x, y, z) * speed);
+			}
+
+			int ax = Input::isKeyPressed(GLFW_KEY_UP) - Input::isKeyPressed(GLFW_KEY_DOWN);
+			int ay = Input::isKeyPressed(GLFW_KEY_LEFT) - Input::isKeyPressed(GLFW_KEY_RIGHT);
+			if (ax != 0 || ay != 0)
+			{
+				spline->RotateControlPoint(ax * speed, ay * speed);
 			}
 		}
 	}

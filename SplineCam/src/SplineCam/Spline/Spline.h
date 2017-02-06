@@ -2,6 +2,8 @@
 #define SPLINE_H
 
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 class Spline
 {
@@ -9,18 +11,21 @@ class Spline
 public:
 
 	Spline() {}
-	Spline(const std::vector<glm::vec3>& controlPoints_)
+	Spline(const std::vector<glm::vec3>& controlPoints_, const std::vector<glm::vec3>& orientations_)
 		: controlPoints(controlPoints_)
+		, orientations(orientations_)
 	{
 	}
 
 	virtual ~Spline() {}
 
-	void Init(const std::vector<glm::vec3>& controlPoints_, 
+	void Init(const std::vector<glm::vec3>& controlPoints_,
+		const std::vector<glm::vec3>& orientations_,
 		float adaptiveSamplingDetailAngleThreshold_ = 0.075f,
 		float adaptiveSamplingDetailDistanceThreshold_ = 1.0f)
 	{
 		this->controlPoints = controlPoints_;
+		this->orientations = orientations_;
 		this->selectedControlPoint = 0;
 		this->adaptiveSamplingDetailAngleThreshold = adaptiveSamplingDetailAngleThreshold_;
 		this->adaptiveSamplingDetailDistanceThreshold = adaptiveSamplingDetailDistanceThreshold_;
@@ -54,6 +59,15 @@ public:
 		glVertex3f(controlPoints[selectedControlPoint].x, controlPoints[selectedControlPoint].y, controlPoints[selectedControlPoint].z);
 		glEnd();
 
+		// draw selected control point custom orientation
+		shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+		glBegin(GL_LINES);
+		glVertex3f(controlPoints[selectedControlPoint].x, controlPoints[selectedControlPoint].y, controlPoints[selectedControlPoint].z);
+		glVertex3f(controlPoints[selectedControlPoint].x + orientations[selectedControlPoint].x, 
+			controlPoints[selectedControlPoint].y + orientations[selectedControlPoint].y, 
+			controlPoints[selectedControlPoint].z + orientations[selectedControlPoint].z);
+		glEnd();
+
 		// draw the control points
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		glPointSize(10.0f);
@@ -61,6 +75,17 @@ public:
 		for (unsigned int i = 0; i < controlPoints.size(); i++) {
 			if (i != selectedControlPoint)
 				glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
+		}
+		glEnd();
+
+		// draw custom orientations
+		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		glBegin(GL_LINES);
+		for (unsigned int i = 0; i < orientations.size(); i++) {
+			if (i != selectedControlPoint) {
+				glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
+				glVertex3f(controlPoints[i].x + orientations[i].x, controlPoints[i].y + orientations[i].y, controlPoints[i].z + orientations[i].z);
+			}
 		}
 		glEnd();
 
@@ -97,15 +122,25 @@ public:
 		t = t < 0 ? 0 : t > 1 ? 1 : t;
 		t *= controlPoints.size() - 1;
 		int i = (int)t;
-		return GetTangent(t - i, i);
+		return GetOrientation(t - i, i);
 	}
 
 	void NextControlPoint() { selectedControlPoint = (selectedControlPoint + 1) % controlPoints.size(); }
 	void PreviousControlPoint() { selectedControlPoint = selectedControlPoint == 0 ? controlPoints.size() - 1 : selectedControlPoint - 1; }
 	void TranslateControlPoint(glm::vec3 translate) { controlPoints[selectedControlPoint] += translate; CalculateSplinePoints(); }
+	void RotateControlPoint(float dx, float dy) {
+		if (orientations[selectedControlPoint] == glm::vec3())
+			orientations[selectedControlPoint] = glm::vec3(1.0f, 0.0f, 0.0f);
+
+		glm::mat4 mat(1);
+		mat = glm::rotate(mat, dy, glm::vec3(0.0f, 1.0f, 0.0f));
+		mat = glm::rotate(mat, dx, glm::cross(orientations[selectedControlPoint], glm::vec3(0.0f, 1.0f, 0.0f)));
+		orientations[selectedControlPoint] = glm::normalize(glm::vec3(mat * glm::vec4(orientations[selectedControlPoint], 1.0f)));
+	}
 
 	void CreateControlPoint() { 
-		controlPoints.insert(controlPoints.begin() + selectedControlPoint, controlPoints[selectedControlPoint]);
+		controlPoints.insert(controlPoints.begin() + selectedControlPoint + 1, controlPoints[selectedControlPoint]);
+		orientations.insert(orientations.begin() + selectedControlPoint + 1, glm::vec3());
 		if (selectedControlPoint != controlPoints.size())
 			NextControlPoint();
 		CalculateSplinePoints();
@@ -114,11 +149,14 @@ public:
 	void DeleteControlPoint() { 
 		if (controlPoints.size() > 1) {
 			controlPoints.erase(controlPoints.begin() + selectedControlPoint);
+			orientations.erase(orientations.begin() + selectedControlPoint);
 			if (selectedControlPoint != 0)
 				PreviousControlPoint();
 			CalculateSplinePoints();
 		}
 	}
+
+	void DeleteCustomOrientation() { orientations[selectedControlPoint] = glm::vec3(); }
 
 	void ToggleDebugPoints() { drawDebugPoints = !drawDebugPoints; }
 
@@ -133,6 +171,21 @@ protected:
 			controlPoints[i] * ((3 * t * t * t - 6 * t * t + 4) / 6) +
 			controlPoints[i + 1 < n ? i + 1 : n] * ((-3 * t * t * t + 3 * t * t + 3 * t + 1) / 6) +
 			controlPoints[i + 2 < n ? i + 2 : n] * ((t * t * t) / 6);
+	}
+
+	glm::vec3 GetOrientation(float t, int i) const {
+		int n = controlPoints.size() - 1;
+		glm::vec3 tangent = GetTangent(t, i);
+		glm::vec3 a = tangent, b = tangent;
+		if (orientations[i] != glm::vec3()) {
+			a = orientations[i];
+		}
+		if (orientations[i + 1 < n ? i + 1 : n] != glm::vec3()) {
+			b = orientations[i + 1 < n ? i + 1 : n];
+		}
+		t = (1 - cosf(t * M_PI)) * 0.5f;
+		tangent = (1 - t) * a + t * b;
+		return glm::normalize(tangent);
 	}
 
 	glm::vec3 GetTangent(float t, int i) const {
@@ -206,6 +259,9 @@ protected:
 
 	// The control points that define the spline
 	std::vector<glm::vec3> controlPoints;
+
+	// The defined orientations for each control point
+	std::vector<glm::vec3> orientations;
 
 	// The computed points that draw the spline
 	std::vector<std::vector<glm::vec3>> splineSections;
