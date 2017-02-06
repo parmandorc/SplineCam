@@ -11,6 +11,7 @@
 #include "Camera/FPSCamera.h"
 #include "Camera/FreeCamera.h"
 #include "Spline/Spline.h"
+#include "Spline/SplineManager.h"
 #include "States/FreeCamState.h"
 #include "States/SplineEditorState.h"
 #include "States/FollowSplineState.h"
@@ -117,6 +118,9 @@ protected:
 
 		// init cubes
 		InitCubes();
+
+		// init SplineManager
+		SplineManager::Get()->Init(10);
 
 		SetMode(Mode::FREE_CAM);
 	}
