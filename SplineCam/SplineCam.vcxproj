@@ -189,6 +189,7 @@
     <ClInclude Include="src\SplineCam\Camera\FreeCamera.h" />
     <ClInclude Include="src\SplineCam\SplineCam.h" />
     <ClInclude Include="src\SplineCam\Spline\Spline.h" />
+    <ClInclude Include="src\SplineCam\Spline\SplineManager.h" />
     <ClInclude Include="src\SplineCam\States\FollowSplineState.h" />
     <ClInclude Include="src\SplineCam\States\FreeCamState.h" />
     <ClInclude Include="src\SplineCam\States\SplineCamState.h" />

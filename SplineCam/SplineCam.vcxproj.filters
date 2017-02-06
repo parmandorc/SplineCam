@@ -188,6 +188,9 @@
     <ClInclude Include="src\SplineCam\Camera\FPSCamera.h">
       <Filter>Source Files\src\SplineCam\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="src\SplineCam\Spline\SplineManager.h">
+      <Filter>Source Files\src\SplineCam\Spline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag">
