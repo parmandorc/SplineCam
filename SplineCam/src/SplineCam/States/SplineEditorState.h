@@ -20,20 +20,20 @@ public:
 		if (spline->ControlPoints().size() == 0)
 		{
 			// The spline is not initialized so init with some random points
-      spline.Init(std::vector<glm::vec3>({
-        glm::vec3(0.0f, 1.0f, -15.0f),
-        glm::vec3(0.0f, 1.0f, -3.0f),
-        glm::vec3(-11.0f, 1.0f, -2.0f),
-        glm::vec3(-11.0f, 1.0f, 3.5f),
-        glm::vec3(-2.6f, 1.0f, 3.5f)
-      }),
-        std::vector<glm::vec3>({
-        glm::vec3(),
-        glm::vec3(1.0f, 0.5f, 1.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f, -0.25f, 1.0f),
-        glm::vec3()
-      }));
+			spline->Init(std::vector<glm::vec3>({
+				glm::vec3(0.0f, 1.0f, -15.0f),
+				glm::vec3(0.0f, 1.0f, -3.0f),
+				glm::vec3(-11.0f, 1.0f, -2.0f),
+				glm::vec3(-11.0f, 1.0f, 3.5f),
+				glm::vec3(-2.6f, 1.0f, 3.5f)
+			}),
+				std::vector<glm::vec3>({
+				glm::vec3(),
+				glm::vec3(1.0f, 0.5f, 1.0f),
+				glm::vec3(0.0f, 0.0f, 1.0f),
+				glm::vec3(0.0f, -0.25f, 1.0f),
+				glm::vec3()
+			}));
 		}
 	}
 
@@ -64,7 +64,7 @@ public:
 
 		case GLFW_KEY_BACKSPACE:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
-				spline.DeleteCustomOrientation();
+				spline->DeleteCustomOrientation();
 			break;
 
 		case GLFW_KEY_F2:
@@ -106,7 +106,7 @@ protected:
 			int ay = Input::isKeyPressed(GLFW_KEY_LEFT) - Input::isKeyPressed(GLFW_KEY_RIGHT);
 			if (ax != 0 || ay != 0)
 			{
-				spline.RotateControlPoint(ax * speed, ay * speed);
+				spline->RotateControlPoint(ax * speed, ay * speed);
 			}
 		}
 	}
