@@ -160,23 +160,88 @@ protected:
 	{
 		// floor
 		cubes[0].pos = glm::vec3(0.0f, 0.0f, 10.0f);
-		cubes[0].scale = glm::vec3(20.0f, 0.0001f, 20.f);
+		cubes[0].scale = glm::vec3(40.0f, 0.0001f, 40.f);
+		cubes[0].color = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 		cubes[0].enabled = true;
 
-		// others
-		cubes[1].pos = glm::vec3(0.0f, 1.0f, 10.0f);
-		cubes[1].color = glm::vec4(0.75f, 0.0f, 0.0f, 1.0f);
+		// walls
+		cubes[1].pos = glm::vec3(40.0f, 5.0f, 10.0f);
+		cubes[1].scale = glm::vec3(0.5f, 5.0f, 40.f);
+		cubes[1].color = glm::vec4(0.11f, 0.11f, 0.11f, 1.0f);
 		cubes[1].enabled = true;
 
-		cubes[2].pos = glm::vec3(5.0f, 3.5f, 5.0f);
-		cubes[2].scale = glm::vec3(1.0f, 3.5f, 1.0f);
-		cubes[2].color = glm::vec4(0.0f, 0.75f, 0.0f, 1.0f);
+		cubes[2].pos = glm::vec3(-40.0f, 5.0f, 10.0f);
+		cubes[2].scale = glm::vec3(0.5f, 5.0f, 40.f);
+		cubes[2].color = glm::vec4(0.11f, 0.11f, 0.11f, 1.0f);
 		cubes[2].enabled = true;
 
-		cubes[3].pos = glm::vec3(-10.0f, 3.5f, 20.0f);
-		cubes[3].scale = glm::vec3(1.0f, 3.5f, 1.0f);
-		cubes[3].color = glm::vec4(0.0f, 0.0f, 0.75f, 1.0f);
+		cubes[3].pos = glm::vec3(0.0f, 5.0f, 50.0f);
+		cubes[3].scale = glm::vec3(40.0f, 5.0f, 0.5f);
+		cubes[3].color = glm::vec4(0.11f, 0.11f, 0.11f, 1.0f);
 		cubes[3].enabled = true;
+
+		cubes[4].pos = glm::vec3(0.0f, 5.0f, -30.0f);
+		cubes[4].scale = glm::vec3(40.0f, 5.0f, 0.5f);
+		cubes[4].color = glm::vec4(0.11f, 0.11f, 0.11f, 1.0f);
+		cubes[4].enabled = true;
+
+		// red cubes
+		cubes[5].pos = glm::vec3(-20.0f, 2.5f, -18.0f);
+		cubes[5].rotation = glm::vec3(0.5f, 0.5f, 0.0f);
+		cubes[5].scale = glm::vec3(2.5f, 2.5f, 2.5f);
+		cubes[5].color = glm::vec4(0.5f, 0.0f, 0.0f, 1.0f);
+		cubes[5].enabled = true;
+
+		cubes[6].pos = glm::vec3(25.0f, 2.5f, 40.0f);
+		cubes[6].rotation = glm::vec3(0.5f, 0.5f, 0.0f);
+		cubes[6].scale = glm::vec3(2.5f, 2.5f, 2.5f);
+		cubes[6].color = glm::vec4(0.5f, 0.0f, 0.0f, 1.0f);
+		cubes[6].enabled = true;
+
+		// blue tower
+		cubes[7].pos = glm::vec3(-10.0f, 3.5f, 20.0f);
+		cubes[7].rotation = glm::vec3(0.0f, 0.5f, 0.0f);
+		cubes[7].scale = glm::vec3(1.0f, 3.5f, 1.0f);
+		cubes[7].color = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+		cubes[7].enabled = true;
+
+		cubes[8].pos = glm::vec3(-15.0f, 11.5f, 22.7f);
+		cubes[8].rotation = glm::vec3(0.0f, 0.5f, 0.0f);
+		cubes[8].scale = glm::vec3(1.0f, 5.0f, 1.0f);
+		cubes[8].color = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+		cubes[8].enabled = true;
+
+		cubes[9].pos = glm::vec3(-5.0f, 11.5f, 17.3f);
+		cubes[9].rotation = glm::vec3(0.0f, 0.5f, 0.0f);
+		cubes[9].scale = glm::vec3(1.0f, 5.0f, 1.0f);
+		cubes[9].color = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+		cubes[9].enabled = true;
+
+		cubes[10].pos = glm::vec3(-10.0f, 7.5f, 20.0f);
+		cubes[10].rotation = glm::vec3(0.0f, 0.5f, 0.0f);
+		cubes[10].scale = glm::vec3(5.0f, 1.0f, 1.0f);
+		cubes[10].color = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+		cubes[10].enabled = true;
+
+		cubes[11].pos = glm::vec3(-10.0f, 15.5f, 20.0f);
+		cubes[11].rotation = glm::vec3(0.0f, 0.5f, 0.0f);
+		cubes[11].scale = glm::vec3(5.0f, 1.0f, 1.0f);
+		cubes[11].color = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+		cubes[11].enabled = true;
+
+		// green walls
+
+		cubes[12].pos = glm::vec3(25.0f, 1.0f, 0.0f);
+		cubes[12].rotation = glm::vec3(0.0f, -1.23f, 0.0f);
+		cubes[12].scale = glm::vec3(5.0f, 1.0f, 0.25f);
+		cubes[12].color = glm::vec4(0.0f, 0.5f, 0.0f, 1.0f);
+		cubes[12].enabled = true;
+
+		cubes[13].pos = glm::vec3(30.0f, 1.0f, -10.0f);
+		cubes[13].rotation = glm::vec3(0.0f, -1.23f, 0.0f);
+		cubes[13].scale = glm::vec3(5.0f, 1.0f, 0.25f);
+		cubes[13].color = glm::vec4(0.0f, 0.5f, 0.0f, 1.0f);
+		cubes[13].enabled = true;
 	}
 
 	void SetMode(Mode newMode)
@@ -245,7 +310,11 @@ protected:
 			if (cube.enabled)
 			{
 				model = glm::mat4();
-				model = glm::translate(model, cube.pos) * glm::scale(model, cube.scale);
+				model = glm::translate(model, cube.pos) 
+					  * glm::rotate(model, cube.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) 
+					  * glm::rotate(model, cube.rotation.y, glm::vec3(0.0f, 1.0f, 0.0f)) 
+					  * glm::rotate(model, cube.rotation.x, glm::vec3(1.0f, 0.0f, 0.0f))
+					  * glm::scale(model, cube.scale);
 				shader.SetUniform("modelViewProjection", viewProjection * model);
 				shader.SetUniform("color", cube.color);
 				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices); // tell to draw cube by using the IBO
@@ -312,6 +381,7 @@ private:
 		bool enabled = false;
 
 		glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	};
