@@ -23,11 +23,11 @@ public:
 			glm::vec3(-2.6f, 1.0f, 3.5f)
 		}),
 			std::vector<glm::vec3>({
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f)
+			glm::vec3(),
+			glm::vec3(1.0f, 0.5f, 1.0f),
+			glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(0.0f, -0.25f, 1.0f),
+			glm::vec3()
 		}));
 	}
 

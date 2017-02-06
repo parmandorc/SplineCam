@@ -2,6 +2,8 @@
 #define SPLINE_H
 
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 class Spline
 {
@@ -142,13 +144,13 @@ protected:
 		int n = controlPoints.size() - 1;
 		glm::vec3 tangent = GetTangent(t, i);
 		glm::vec3 a = tangent, b = tangent;
-		int i1 = i + 1 < n ? i + 1 : n;
-		if (orientations[i].x != 0.0f || orientations[i].y != 0.0f || orientations[i].z != 0.0f) {
+		if (orientations[i] != glm::vec3()) {
 			a = orientations[i];
 		}
-		if (orientations[i1].x != 0.0f || orientations[i1].y != 0.0f || orientations[i1].z != 0.0f) {
-			b = orientations[i1];
+		if (orientations[i + 1 < n ? i + 1 : n] != glm::vec3()) {
+			b = orientations[i + 1 < n ? i + 1 : n];
 		}
+		t = (1 - cosf(t * M_PI)) * 0.5f;
 		tangent = (1 - t) * a + t * b;
 		return glm::normalize(tangent);
 	}
