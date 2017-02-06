@@ -128,6 +128,15 @@ public:
 	void NextControlPoint() { selectedControlPoint = (selectedControlPoint + 1) % controlPoints.size(); }
 	void PreviousControlPoint() { selectedControlPoint = selectedControlPoint == 0 ? controlPoints.size() - 1 : selectedControlPoint - 1; }
 	void TranslateControlPoint(glm::vec3 translate) { controlPoints[selectedControlPoint] += translate; CalculateSplinePoints(); }
+	void RotateControlPoint(float dx, float dy) {
+		if (orientations[selectedControlPoint] == glm::vec3())
+			orientations[selectedControlPoint] = glm::vec3(1.0f, 0.0f, 0.0f);
+
+		glm::mat4 mat(1);
+		mat = glm::rotate(mat, dy, glm::vec3(0.0f, 1.0f, 0.0f));
+		mat = glm::rotate(mat, dx, glm::cross(orientations[selectedControlPoint], glm::vec3(0.0f, 1.0f, 0.0f)));
+		orientations[selectedControlPoint] = glm::normalize(glm::vec3(mat * glm::vec4(orientations[selectedControlPoint], 1.0f)));
+	}
 
 	void CreateControlPoint() { 
 		controlPoints.insert(controlPoints.begin() + selectedControlPoint + 1, controlPoints[selectedControlPoint]);
@@ -146,6 +155,8 @@ public:
 			CalculateSplinePoints();
 		}
 	}
+
+	void DeleteCustomOrientation() { orientations[selectedControlPoint] = glm::vec3(); }
 
 	void ToggleDebugPoints() { drawDebugPoints = !drawDebugPoints; }
 

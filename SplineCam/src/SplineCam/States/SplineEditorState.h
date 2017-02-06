@@ -56,6 +56,11 @@ public:
 				spline.CreateControlPoint();
 			break;
 
+		case GLFW_KEY_BACKSPACE:
+			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+				spline.DeleteCustomOrientation();
+			break;
+
 		case GLFW_KEY_F2:
 			spline.ToggleDebugPoints();
 			break;
@@ -89,6 +94,13 @@ protected:
 			if (x != 0 || y != 0 || z != 0) 
 			{
 				spline.TranslateControlPoint(glm::vec3(x, y, z) * speed);
+			}
+
+			int ax = Input::isKeyPressed(GLFW_KEY_UP) - Input::isKeyPressed(GLFW_KEY_DOWN);
+			int ay = Input::isKeyPressed(GLFW_KEY_LEFT) - Input::isKeyPressed(GLFW_KEY_RIGHT);
+			if (ax != 0 || ay != 0)
+			{
+				spline.RotateControlPoint(ax * speed, ay * speed);
 			}
 		}
 	}
