@@ -130,8 +130,8 @@ public:
 	void TranslateControlPoint(glm::vec3 translate) { controlPoints[selectedControlPoint] += translate; CalculateSplinePoints(); }
 
 	void CreateControlPoint() { 
-		controlPoints.insert(controlPoints.begin() + selectedControlPoint, controlPoints[selectedControlPoint]);
-		orientations.insert(orientations.begin() + selectedControlPoint, glm::vec3());
+		controlPoints.insert(controlPoints.begin() + selectedControlPoint + 1, controlPoints[selectedControlPoint]);
+		orientations.insert(orientations.begin() + selectedControlPoint + 1, glm::vec3());
 		if (selectedControlPoint != controlPoints.size())
 			NextControlPoint();
 		CalculateSplinePoints();
