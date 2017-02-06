@@ -59,6 +59,15 @@ public:
 		glVertex3f(controlPoints[selectedControlPoint].x, controlPoints[selectedControlPoint].y, controlPoints[selectedControlPoint].z);
 		glEnd();
 
+		// draw selected control point custom orientation
+		shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+		glBegin(GL_LINES);
+		glVertex3f(controlPoints[selectedControlPoint].x, controlPoints[selectedControlPoint].y, controlPoints[selectedControlPoint].z);
+		glVertex3f(controlPoints[selectedControlPoint].x + orientations[selectedControlPoint].x, 
+			controlPoints[selectedControlPoint].y + orientations[selectedControlPoint].y, 
+			controlPoints[selectedControlPoint].z + orientations[selectedControlPoint].z);
+		glEnd();
+
 		// draw the control points
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		glPointSize(10.0f);
@@ -66,6 +75,17 @@ public:
 		for (unsigned int i = 0; i < controlPoints.size(); i++) {
 			if (i != selectedControlPoint)
 				glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
+		}
+		glEnd();
+
+		// draw custom orientations
+		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		glBegin(GL_LINES);
+		for (unsigned int i = 0; i < orientations.size(); i++) {
+			if (i != selectedControlPoint) {
+				glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
+				glVertex3f(controlPoints[i].x + orientations[i].x, controlPoints[i].y + orientations[i].y, controlPoints[i].z + orientations[i].z);
+			}
 		}
 		glEnd();
 
