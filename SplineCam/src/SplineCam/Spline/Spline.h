@@ -183,7 +183,7 @@ protected:
 		if (orientations[i + 1 < n ? i + 1 : n] != glm::vec3()) {
 			b = orientations[i + 1 < n ? i + 1 : n];
 		}
-		t = (1 - cosf(t * M_PI)) * 0.5f;
+		t = (1 - cosf(float(t * M_PI))) * 0.5f;
 		tangent = (1 - t) * a + t * b;
 		return glm::normalize(tangent);
 	}
