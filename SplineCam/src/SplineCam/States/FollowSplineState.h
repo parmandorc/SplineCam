@@ -12,7 +12,7 @@ public:
 	void Start() override
 	{
 		// init camera
-		Spline* spline = SplineManager::Get()->GetSpline(0);
+		spline = SplineManager::Get()->GetSpline(0);
 		if (spline->ControlPoints().size() == 0)
 		{
 			// The spline is not initialized so init with some random points
@@ -44,6 +44,18 @@ public:
 
 	void OnKeyPressed(int key) override
 	{
+		switch (key)
+		{
+
+		case GLFW_KEY_ENTER:
+			doRenderSpline = !doRenderSpline;
+			break;
+
+		case GLFW_KEY_F2:
+			if (doRenderSpline)
+				spline->ToggleDebugPoints();
+			break;
+		}
 	};
 
 	void Update() override
@@ -53,11 +65,17 @@ public:
 
 	void Render(Shader& shader) override
 	{
+		if (doRenderSpline)
+			spline->Render(camera.ViewProjectionMatrix(), shader);
 	}
 
 private:
 
 	FollowSplineCamera camera;
+
+	Spline* spline;
+
+	bool doRenderSpline;
 };
 
 #endif // !FOLLOW_SPLINE_STATE_H
