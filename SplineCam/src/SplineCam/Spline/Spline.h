@@ -234,7 +234,7 @@ protected:
 	}
 
 	std::vector<glm::vec3> CalculateRecursiveSubdivision(int i, float t0, float t1, glm::vec3 x0, glm::vec3 x1, glm::vec3 m0, glm::vec3 m1) {
-		if (t1 - t0 < maximumSamplingDetail) { // Avoid infinite recursion
+		if (t1 - t0 < maximumSamplingDetail || x0 == x1) { // Avoid infinite recursion
 			return std::vector<glm::vec3>();
 		}
 
