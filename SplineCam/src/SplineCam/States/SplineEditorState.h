@@ -125,11 +125,16 @@ protected:
 		if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) 
 		{
 			int x = Input::isKeyPressed(GLFW_KEY_D) - Input::isKeyPressed(GLFW_KEY_A);
-			int y = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);
-			int z = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
+			int y = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
+			int z = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);
 			if (x != 0 || y != 0 || z != 0) 
 			{
-				spline->TranslateControlPoint(glm::vec3(x, y, z) * speed);
+				glm::mat3 axis = camera.GetAxis();
+				axis[2].y = 0.0f;
+				axis[2] = glm::normalize(axis[2]);
+				axis[1] = glm::vec3(0.0f, 1.0f, 0.0f);
+				axis[0] = glm::cross(axis[2], axis[1]);
+				spline->TranslateControlPoint((axis[0] * (float)x + axis[1] * (float)y + axis[2] * (float)z) * speed);
 			}
 
 			int ax = Input::isKeyPressed(GLFW_KEY_UP) - Input::isKeyPressed(GLFW_KEY_DOWN);

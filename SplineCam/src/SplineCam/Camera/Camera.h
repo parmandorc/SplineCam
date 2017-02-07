@@ -38,6 +38,7 @@ public:
 
 		UpdateCameraVectors();
 	}
+
 	void Rotate(const glm::vec3& angles)
 	{
 		this->eulerAngles += angles;
@@ -67,6 +68,10 @@ public:
 		forward.z = newForwardQuaternion.z;
 
 		UpdateCameraVectors();
+	}
+
+	glm::mat3 GetAxis() {
+		return glm::mat3(right, up, forward);
 	}
 
 protected:
