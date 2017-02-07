@@ -122,7 +122,7 @@ protected:
 		// init SplineManager
 		SplineManager::Get()->Init(10);
 
-		SetMode(Mode::FREE_CAM);
+		SetMode(Mode::SPLINE_EDITOR);
 	}
 		
 	void InitVBO()

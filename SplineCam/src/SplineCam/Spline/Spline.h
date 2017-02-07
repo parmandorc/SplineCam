@@ -20,12 +20,14 @@ public:
 	virtual ~Spline() {}
 
 	void Init(const std::vector<glm::vec3>& controlPoints_,
-		const std::vector<glm::vec3>& orientations_,
+		const std::vector<glm::vec3>& orientations_ = std::vector<glm::vec3>(),
 		float adaptiveSamplingDetailAngleThreshold_ = 0.075f,
 		float adaptiveSamplingDetailDistanceThreshold_ = 1.0f)
 	{
 		this->controlPoints = controlPoints_;
 		this->orientations = orientations_;
+		if (this->orientations.size() != this->controlPoints.size())
+			this->orientations = std::vector<glm::vec3>(this->controlPoints.size());
 		this->selectedControlPoint = 0;
 		this->adaptiveSamplingDetailAngleThreshold = adaptiveSamplingDetailAngleThreshold_;
 		this->adaptiveSamplingDetailDistanceThreshold = adaptiveSamplingDetailDistanceThreshold_;
