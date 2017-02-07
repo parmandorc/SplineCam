@@ -67,6 +67,7 @@ public:
 		}
 
 	};
+
 	void Update() override
 	{
 		camera.Update();

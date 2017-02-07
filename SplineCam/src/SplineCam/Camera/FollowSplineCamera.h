@@ -24,9 +24,18 @@ public:
 			
 			Move(nextPoint - pos);
 
-			t = fmodf(t + 0.00015f, 1);
+			if (!isPaused || doRewind || doFastForward) {
+				int step = doRewind ? -1 : !isPaused + doFastForward;
+				t += 0.00015f * step;
+				if (t < 0)
+					t += (int)t + 1;
+				t = fmodf(t, 1);
+			}
 		}
 	}
+
+	bool isPaused = false, doRewind = false, doFastForward = false;
+
 
 private:
 

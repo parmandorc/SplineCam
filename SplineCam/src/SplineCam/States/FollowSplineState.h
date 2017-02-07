@@ -39,11 +39,17 @@ public:
 			if (doRenderSpline)
 				spline->ToggleDebugPoints();
 			break;
+
+		case GLFW_KEY_SPACE:
+			camera.isPaused = !camera.isPaused;
+			break;
 		}
 	};
 
 	void Update() override
 	{
+		camera.doRewind = Input::isKeyPressed(GLFW_KEY_Z);
+		camera.doFastForward = Input::isKeyPressed(GLFW_KEY_X);
 		camera.Update();
 	}
 
