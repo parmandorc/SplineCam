@@ -47,6 +47,8 @@ public:
 				glm::vec3(),
 			}));
 		}
+
+		isPaused = false;
 	}
 
 	void Stop() override
@@ -67,9 +69,9 @@ public:
 				spline->NextControlPoint();
 			break;
 
-		case GLFW_KEY_SPACE:
+		case GLFW_KEY_ENTER:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
-				spline->DeleteControlPoint();
+				spline->CreateControlPoint(); //from camera
 			else
 				spline->CreateControlPoint();
 			break;
@@ -77,6 +79,12 @@ public:
 		case GLFW_KEY_BACKSPACE:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
 				spline->DeleteCustomOrientation();
+			else
+				spline->DeleteControlPoint();
+			break;
+
+		case GLFW_KEY_SPACE:
+			isPaused = !isPaused;
 			break;
 
 		case GLFW_KEY_F2:
@@ -94,7 +102,13 @@ public:
 		camera.Update();
 		UpdateSpline();
 
-		animationFrame = fmodf(animationFrame + 0.00025f, 1);
+		if (!isPaused || Input::isKeyPressed(GLFW_KEY_Z) || Input::isKeyPressed(GLFW_KEY_X)) {
+			int step = Input::isKeyPressed(GLFW_KEY_Z) ? -1 : !isPaused + Input::isKeyPressed(GLFW_KEY_X);
+			animationFrame += 0.00025f * step;
+			if (animationFrame < 0)
+				animationFrame += (int)animationFrame + 1;
+			animationFrame = fmodf(animationFrame, 1);
+		}
 	}
 
 	void Render(Shader& shader) override
@@ -153,6 +167,7 @@ private:
 
 	// animatedPoint
 	float animationFrame = 0.0f;
+	bool isPaused;
 
 	// camera
 	FreeCamera camera;

@@ -33,6 +33,8 @@ public:
 		}
 
 		camera.Init(spline, 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+
+		doRenderSpline = false;
 	}
 
 	void Stop() override
