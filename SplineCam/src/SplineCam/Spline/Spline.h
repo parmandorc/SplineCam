@@ -138,22 +138,38 @@ public:
 		orientations[selectedControlPoint] = glm::normalize(glm::vec3(mat * glm::vec4(orientations[selectedControlPoint], 1.0f)));
 	}
 
-	void CreateControlPoint() { 
-		controlPoints.insert(controlPoints.begin() + selectedControlPoint + 1, controlPoints[selectedControlPoint]);
-		orientations.insert(orientations.begin() + selectedControlPoint + 1, glm::vec3());
-		if (selectedControlPoint != controlPoints.size())
-			NextControlPoint();
+	float CreateControlPoint(float t) {
+		t = t < 0 ? 0 : t > 1 ? 1 : t;
+		t *= controlPoints.size() - 1;
+		int i = (int)t;
+		controlPoints.insert(controlPoints.begin() + i + 1, GetPoint(t - i, i));
+		orientations.insert(orientations.begin() + i + 1, glm::vec3());
+		selectedControlPoint = i + 1;
 		CalculateSplinePoints();
+		return (float)(i+1) / (controlPoints.size() - 1);
 	}
 
-	void DeleteControlPoint() { 
-		if (controlPoints.size() > 1) {
+	float DeleteControlPoint(float t) { 
+		if (controlPoints.size() > 2) {
+			t = t < 0 ? 0 : t > 1 ? 1 : t;
+			t *= controlPoints.size() - 1;
+			int i = (int)t;
+
 			controlPoints.erase(controlPoints.begin() + selectedControlPoint);
 			orientations.erase(orientations.begin() + selectedControlPoint);
+
+			float newT = t - 1;
+			if (i == selectedControlPoint)
+				newT += (1 - (t - i)) * 0.5f;
+
 			if (selectedControlPoint != 0)
 				PreviousControlPoint();
 			CalculateSplinePoints();
+
+			return newT / (controlPoints.size() - 1);
 		}
+
+		return t;
 	}
 
 	void DeleteCustomOrientation() { orientations[selectedControlPoint] = glm::vec3(); }

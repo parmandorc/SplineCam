@@ -71,16 +71,16 @@ public:
 
 		case GLFW_KEY_ENTER:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
-				spline->CreateControlPoint(); //from camera
+				animationFrame = spline->CreateControlPoint(animationFrame); //from camera
 			else
-				spline->CreateControlPoint();
+				animationFrame = spline->CreateControlPoint(animationFrame);
 			break;
 
 		case GLFW_KEY_BACKSPACE:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
 				spline->DeleteCustomOrientation();
 			else
-				spline->DeleteControlPoint();
+				animationFrame = spline->DeleteControlPoint(animationFrame);
 			break;
 
 		case GLFW_KEY_SPACE:
