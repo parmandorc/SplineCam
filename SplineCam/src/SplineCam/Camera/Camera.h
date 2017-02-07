@@ -70,9 +70,8 @@ public:
 		UpdateCameraVectors();
 	}
 
-	glm::mat3 GetAxis() {
-		return glm::mat3(right, up, forward);
-	}
+	glm::mat3 GetAxis() { return glm::mat3(right, up, forward);	}
+	glm::vec3 GetPosition() { return pos; }
 
 protected:
 	Camera() {}

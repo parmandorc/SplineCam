@@ -140,15 +140,21 @@ public:
 		orientations[selectedControlPoint] = glm::normalize(glm::vec3(mat * glm::vec4(orientations[selectedControlPoint], 1.0f)));
 	}
 
-	float CreateControlPoint(float t) {
+	float CreateControlPoint(float t, glm::vec3 position = glm::vec3(), glm::vec3 orientation = glm::vec3()) {
 		t = t < 0 ? 0 : t > 1 ? 1 : t;
 		t *= controlPoints.size() - 1;
 		int i = (int)t;
-		controlPoints.insert(controlPoints.begin() + i + 1, GetPoint(t - i, i));
-		orientations.insert(orientations.begin() + i + 1, glm::vec3());
+		if (position == glm::vec3()) {
+			position = GetPoint(t - i, i);
+		}
+
+		controlPoints.insert(controlPoints.begin() + i + 1, position);
+		orientations.insert(orientations.begin() + i + 1, orientation);
+
 		selectedControlPoint = i + 1;
 		CalculateSplinePoints();
-		return (float)(i+1) / (controlPoints.size() - 1);
+
+		return (float)(i + 1) / (controlPoints.size() - 1);
 	}
 
 	float DeleteControlPoint(float t) { 

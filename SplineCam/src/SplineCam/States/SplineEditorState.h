@@ -41,7 +41,7 @@ public:
 
 		case GLFW_KEY_ENTER:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
-				animationFrame = spline->CreateControlPoint(animationFrame); //from camera
+				animationFrame = spline->CreateControlPoint(animationFrame, camera.GetPosition(), camera.GetAxis()[2]); //from camera
 			else
 				animationFrame = spline->CreateControlPoint(animationFrame);
 			break;
