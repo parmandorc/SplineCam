@@ -80,6 +80,15 @@ public:
 				animationFrame += (int)animationFrame + 1;
 			animationFrame = fmodf(animationFrame, 1);
 		}
+
+		if (Input::isKeyPressed(GLFW_KEY_F)) {
+			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+				camera.MoveTo(spline->SelectedControlPoint() - camera.GetAxis()[2] * 10.0f);
+			}
+			else {
+				camera.MoveTo(spline->GetPoint(animationFrame) - camera.GetAxis()[2] * 10.0f);
+			}
+		}
 	}
 
 	void Render(Shader& shader) override

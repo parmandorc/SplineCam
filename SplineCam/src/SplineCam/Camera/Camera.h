@@ -39,6 +39,13 @@ public:
 		UpdateCameraVectors();
 	}
 
+	void MoveTo(const glm::vec3& position)
+	{
+		pos = position;
+
+		UpdateCameraVectors();
+	}
+
 	void Rotate(const glm::vec3& angles)
 	{
 		this->eulerAngles += angles;

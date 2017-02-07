@@ -189,6 +189,7 @@ public:
 	void ToggleDebugPoints() { drawDebugPoints = !drawDebugPoints; }
 
 	const std::vector<glm::vec3>& ControlPoints() const { return controlPoints; }
+	const glm::vec3& SelectedControlPoint() const { return controlPoints[selectedControlPoint]; }
 
 	void PrintControlPoints()
 	{
