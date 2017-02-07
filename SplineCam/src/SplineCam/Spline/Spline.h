@@ -162,6 +162,14 @@ public:
 
 	const std::vector<glm::vec3>& ControlPoints() const { return controlPoints; }
 
+	void PrintControlPoints()
+	{
+		for (auto& point : controlPoints)
+		{
+			printf("( %f, %f, %f)\n", point.x, point.y, point.z);
+		}
+	}
+
 protected:
 
 	// Calculates the value of the i-th spline section for the given value of the parameter t [0, 1]
@@ -183,7 +191,7 @@ protected:
 		if (orientations[i + 1 < n ? i + 1 : n] != glm::vec3()) {
 			b = orientations[i + 1 < n ? i + 1 : n];
 		}
-		t = (1 - cosf(t * M_PI)) * 0.5f;
+		t = (1 - cosf(float(t * M_PI))) * 0.5f;
 		tangent = (1 - t) * a + t * b;
 		return glm::normalize(tangent);
 	}
