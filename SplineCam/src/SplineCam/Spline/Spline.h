@@ -160,9 +160,13 @@ public:
 			controlPoints.erase(controlPoints.begin() + selectedControlPoint);
 			orientations.erase(orientations.begin() + selectedControlPoint);
 
-			float newT = t - 1;
-			if (i == selectedControlPoint)
-				newT += (1 - (t - i)) * 0.5f;
+			float newT = 0.0f;
+			if (i != 0 || selectedControlPoint != 0) {
+				newT = t - 1;
+				if (i == selectedControlPoint) {
+					newT += (1 - (t - i)) * 0.5f;
+				}
+			}
 
 			if (selectedControlPoint != 0)
 				PreviousControlPoint();
