@@ -46,9 +46,8 @@ public:
 					glm::vec3(-14.59f, 9.67f, 8.7f),
 					glm::vec3(-15.83f, 5.21f, -0.69f),
 					glm::vec3(-19.59f, 1.29f, -8.72f),
-					glm::vec3(-9.94f, 0.18f, -17.18f),
-					glm::vec3(3.08f, 0.75f, -15.0f)
-				}));
+					glm::vec3(-9.94f, 0.18f, -17.18f)
+				}), std::vector<glm::vec3>(), true);
 			}
 		}
 		return spline;

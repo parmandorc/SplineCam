@@ -21,8 +21,9 @@ public:
 
 	void Init(const std::vector<glm::vec3>& controlPoints_,
 		const std::vector<glm::vec3>& orientations_ = std::vector<glm::vec3>(),
-		float adaptiveSamplingDetailAngleThreshold_ = 0.075f,
-		float adaptiveSamplingDetailDistanceThreshold_ = 1.0f)
+		const bool isCyclic_ = false,
+		const float adaptiveSamplingDetailAngleThreshold_ = 0.075f,
+		const float adaptiveSamplingDetailDistanceThreshold_ = 1.0f)
 	{
 		this->controlPoints = controlPoints_;
 		this->orientations = orientations_;
@@ -33,6 +34,7 @@ public:
 		this->adaptiveSamplingDetailDistanceThreshold = adaptiveSamplingDetailDistanceThreshold_;
 		this->maximumSamplingDetail = 0.001f;
 		this->drawDebugPoints = false;
+		this->isCyclic = isCyclic_;
 
 		CalculateSplinePoints();
 	}
@@ -98,6 +100,10 @@ public:
 			glVertex3f(controlPoints[i].x, controlPoints[i].y, controlPoints[i].z);
 			glVertex3f(controlPoints[i + 1].x, controlPoints[i + 1].y, controlPoints[i + 1].z);
 		}
+		if (isCyclic) {
+			glVertex3f(controlPoints[controlPoints.size() - 1].x, controlPoints[controlPoints.size() - 1].y, controlPoints[controlPoints.size() - 1].z);
+			glVertex3f(controlPoints[0].x, controlPoints[0].y, controlPoints[0].z);
+		}
 		glEnd();
 
 		if (drawDebugPoints) {
@@ -115,14 +121,14 @@ public:
 	// Returns the value of the spline for the given value of the parameter t [0, 1]
 	glm::vec3 GetPoint(float t) const {
 		t = t < 0 ? 0 : t > 1 ? 1 : t;
-		t *= controlPoints.size() - 1;
+		t *= controlPoints.size() - !isCyclic;
 		int i = (int)t;
 		return GetPoint(t - i, i);
 	}
 	
 	glm::vec3 GetTangent(float t) const {
 		t = t < 0 ? 0 : t > 1 ? 1 : t;
-		t *= controlPoints.size() - 1;
+		t *= controlPoints.size() - !isCyclic;
 		int i = (int)t;
 		return GetOrientation(t - i, i);
 	}
@@ -199,26 +205,36 @@ public:
 		}
 	}
 
+	void ToggleCyclicOrClamped() { isCyclic = !isCyclic; CalculateSplinePoints(); }
+
 protected:
+
+	int GetIndex(int i) const {
+		int n = controlPoints.size() - !isCyclic;
+		if (!isCyclic)
+			return i < 0 ? 0 : (i < n ? i : n);
+		else
+			return i < 0 ? (i % -n) + n : i % n;
+	}
 
 	// Calculates the value of the i-th spline section for the given value of the parameter t [0, 1]
 	glm::vec3 GetPoint(float t, int i) const {
 		int n = controlPoints.size() - 1;
-		return controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-t * t * t + 3 * t * t - 3 * t + 1) / 6) +
-			controlPoints[i] * ((3 * t * t * t - 6 * t * t + 4) / 6) +
-			controlPoints[i + 1 < n ? i + 1 : n] * ((-3 * t * t * t + 3 * t * t + 3 * t + 1) / 6) +
-			controlPoints[i + 2 < n ? i + 2 : n] * ((t * t * t) / 6);
+		return controlPoints[GetIndex(i - 1)] * ((-t * t * t + 3 * t * t - 3 * t + 1) / 6) +
+			controlPoints[GetIndex(i)] * ((3 * t * t * t - 6 * t * t + 4) / 6) +
+			controlPoints[GetIndex(i + 1)] * ((-3 * t * t * t + 3 * t * t + 3 * t + 1) / 6) +
+			controlPoints[GetIndex(i + 2)] * ((t * t * t) / 6);
 	}
 
 	glm::vec3 GetOrientation(float t, int i) const {
 		int n = controlPoints.size() - 1;
 		glm::vec3 tangent = GetTangent(t, i);
 		glm::vec3 a = tangent, b = tangent;
-		if (orientations[i] != glm::vec3()) {
-			a = orientations[i];
+		if (orientations[GetIndex(i)] != glm::vec3()) {
+			a = orientations[GetIndex(i)];
 		}
-		if (orientations[i + 1 < n ? i + 1 : n] != glm::vec3()) {
-			b = orientations[i + 1 < n ? i + 1 : n];
+		if (orientations[GetIndex(i + 1)] != glm::vec3()) {
+			b = orientations[GetIndex(i + 1)];
 		}
 		t = (1 - cosf(float(t * M_PI))) * 0.5f;
 		tangent = (1 - t) * a + t * b;
@@ -227,10 +243,10 @@ protected:
 
 	glm::vec3 GetTangent(float t, int i) const {
 		int n = controlPoints.size() - 1;
-		return glm::normalize(controlPoints[i - 1 > 0 ? i - 1 : 0] * ((-3 * t * t + 6 * t - 3) / 6) +
-			controlPoints[i] * ((9 * t * t - 12 * t) / 6) +
-			controlPoints[i + 1 < n ? i + 1 : n] * ((-9 * t * t + 6 * t + 3) / 6) +
-			controlPoints[i + 2 < n ? i + 2 : n] * ((3 * t * t) / 6));
+		return glm::normalize(controlPoints[GetIndex(i - 1)] * ((-3 * t * t + 6 * t - 3) / 6) +
+			controlPoints[GetIndex(i)] * ((9 * t * t - 12 * t) / 6) +
+			controlPoints[GetIndex(i + 1)] * ((-9 * t * t + 6 * t + 3) / 6) +
+			controlPoints[GetIndex(i + 2)] * ((3 * t * t) / 6));
 	}
 
 	std::vector<glm::vec3> CalculateRecursiveSubdivision(int i, float t0, float t1, glm::vec3 x0, glm::vec3 x1, glm::vec3 m0, glm::vec3 m1) {
@@ -279,18 +295,18 @@ protected:
 			section.insert(section.end(), result.begin(), result.end());
 			section.push_back(x1);
 			splineSections.push_back(section);
-
-			printf("%d: %d\n", i, section.size());
 		}
 	}
 
 	std::vector<glm::vec3> GetSplinePoints() {
 		std::vector<glm::vec3> points;
-		points.push_back(controlPoints[0]);
+		if (!isCyclic)
+			points.push_back(controlPoints[0]);
 		for (std::vector<glm::vec3> section : splineSections) {
 			points.insert(points.end(), section.begin(), section.end());
 		}
-		points.push_back(controlPoints[controlPoints.size() - 1]);
+		if (!isCyclic)
+			points.push_back(controlPoints[controlPoints.size() - 1]);
 		return points;
 	}
 
@@ -322,6 +338,9 @@ protected:
 
 	// Whether to explicitly draw the points that are used to render the spline
 	bool drawDebugPoints;
+
+	// Whether this spline is cyclic or clamped.
+	bool isCyclic = false;
 };
 
 #endif

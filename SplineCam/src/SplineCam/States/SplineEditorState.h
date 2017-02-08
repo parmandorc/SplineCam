@@ -64,8 +64,12 @@ public:
 		case GLFW_KEY_F3:
 			spline->PrintControlPoints();
 			break;
-		}
 
+		case GLFW_KEY_F4:
+			spline->ToggleCyclicOrClamped();
+			break;
+
+		}
 	};
 
 	void Update(float deltaTime) override
