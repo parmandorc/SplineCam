@@ -46,11 +46,11 @@ public:
 		}
 	};
 
-	void Update() override
+	void Update(float deltaTime) override
 	{
 		camera.doRewind = Input::isKeyPressed(GLFW_KEY_Z);
 		camera.doFastForward = Input::isKeyPressed(GLFW_KEY_X);
-		camera.Update();
+		camera.Update(deltaTime);
 	}
 
 	void Render(Shader& shader) override

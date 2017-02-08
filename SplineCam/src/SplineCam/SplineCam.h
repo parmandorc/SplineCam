@@ -82,11 +82,11 @@ public:
 		}
 	}
 
-	void Update() 
+	void Update(float deltaTime) 
 	{
 		if (state)
 		{
-			state->Update();
+			state->Update(deltaTime);
 		}
 	}
 

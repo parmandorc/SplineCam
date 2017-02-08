@@ -8,6 +8,8 @@
 #include "Input/Input.h"
 #include "SplineCam/SplineCam.h"
 
+#include <chrono>
+
 int main()
 {
 	// init glfw
@@ -53,18 +55,31 @@ int main()
 	glfwSetScrollCallback(window, Input::OnMouseScrollCallback);
 	glfwSetCursorPosCallback(window, Input::OnMouseMoveCallback);
 
+	const auto frameCap = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<long, std::ratio<1, 60>>(1));
+	auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds::zero());
+	auto previousTime = std::chrono::steady_clock::now();
+
 	// main loop
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		auto currentTime = std::chrono::steady_clock::now();
+		deltaTime += std::chrono::duration_cast<std::chrono::microseconds>(currentTime - previousTime);
+		previousTime = currentTime;
 
-		splineCam.Update();
-		splineCam.Render();
+		if (deltaTime > frameCap) 
+		{
+			glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glfwSwapBuffers(window);
+			splineCam.Update((float)deltaTime.count() / 1000000);
+			splineCam.Render();
+
+			glfwSwapBuffers(window);
+
+			deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds::zero());
+		}
 	}
 
 	glfwTerminate();

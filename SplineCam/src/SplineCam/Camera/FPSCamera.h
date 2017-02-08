@@ -24,10 +24,10 @@ public:
 		lastMousePos = glm::vec2(x, y);
 	}
 
-	void Update() override
+	void Update(float deltaTime) override
 	{
-		static const float speed = 0.01f;
-		static const float angle = 0.001f;
+		static const float speed = 10.0f * deltaTime;
+		static const float angle = 0.67f * deltaTime;
 
 		if (Input::isKeyPressed(GLFW_KEY_W))
 		{

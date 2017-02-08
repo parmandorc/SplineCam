@@ -68,14 +68,14 @@ public:
 
 	};
 
-	void Update() override
+	void Update(float deltaTime) override
 	{
-		camera.Update();
-		UpdateSpline();
+		camera.Update(deltaTime);
+		UpdateSpline(deltaTime);
 
 		if (!isPaused || Input::isKeyPressed(GLFW_KEY_Z) || Input::isKeyPressed(GLFW_KEY_X)) {
 			int step = Input::isKeyPressed(GLFW_KEY_Z) ? -1 : !isPaused + Input::isKeyPressed(GLFW_KEY_X);
-			animationFrame += 0.00025f * step;
+			animationFrame += 0.1f * step * deltaTime;
 			if (animationFrame < 0)
 				animationFrame += (int)animationFrame + 1;
 			animationFrame = fmodf(animationFrame, 1);
@@ -99,11 +99,12 @@ public:
 
 protected:
 
-	void UpdateSpline() 
+	void UpdateSpline(float deltaTime) 
 	{
-		static const float speed = 0.01f;
 		if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) 
 		{
+			static const float speed = 1.5f * deltaTime;
+
 			int x = Input::isKeyPressed(GLFW_KEY_D) - Input::isKeyPressed(GLFW_KEY_A);
 			int y = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
 			int z = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);

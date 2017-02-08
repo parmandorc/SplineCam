@@ -8,7 +8,7 @@ class Camera
 public:
 	virtual ~Camera() {}
 	virtual void OnMouseMove(float x, float y){}
-	virtual void Update(){}
+	virtual void Update(float deltaTime){}
 
 	void Init(const glm::vec3& pos, const glm::vec3& focusPos, float fov, float aspect, float zNear, float zFar)
 	{
