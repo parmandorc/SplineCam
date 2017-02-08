@@ -16,7 +16,7 @@ public:
 		Camera::Init(spline->GetPoint(t), glm::normalize(spline->GetTangent(t)), fov, aspect, zNear, zFar);
 	}
 
-	void Update() override
+	void Update(float deltaTime) override
 	{
 		if (spline)
 		{
@@ -24,9 +24,18 @@ public:
 			
 			Move(nextPoint - pos);
 
-			t = fmodf(t + 0.00015f, 1);
+			if (!isPaused || doRewind || doFastForward) {
+				int step = doRewind ? -1 : !isPaused + doFastForward;
+				t += 10.0f * step * deltaTime * (1/spline->GetLength());
+				if (t < 0)
+					t += (int)t + 1;
+				t = fmodf(t, 1);
+			}
 		}
 	}
+
+	bool isPaused = false, doRewind = false, doFastForward = false;
+
 
 private:
 

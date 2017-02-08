@@ -17,36 +17,8 @@ public:
 
 		// init spline
 		spline = SplineManager::Get()->GetSpline(0);
-		if (spline->ControlPoints().size() == 0)
-		{
-			// The spline is not initialized so init with some random points
-			spline->Init(std::vector<glm::vec3>({
-				glm::vec3(3.08f, 0.75f, -15.0f),
-				glm::vec3(22.66f, 0.64f, -12.43f),
-				glm::vec3(32.31f, 1.0f, -2.0f),
-				glm::vec3(31.56f, 1.0f, 13.01f),
-				glm::vec3(17.51f, 6.89f, 37.67f),
-				glm::vec3(-3.79f, 13.13f, 44.28f),
-				glm::vec3(-14.59f, 9.67f, 8.7f),
-				glm::vec3(-15.83f, 5.21f, -0.69f),
-				glm::vec3(-19.59f, 1.29f, -8.72f),
-				glm::vec3(-9.94f, 0.18f, -17.18f),
-				glm::vec3(3.08f, 0.75f, -15.0f)
-			}),
-				std::vector<glm::vec3>({
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-				glm::vec3(),
-			}));
-		}
+
+		isPaused = false;
 	}
 
 	void Stop() override
@@ -67,16 +39,22 @@ public:
 				spline->NextControlPoint();
 			break;
 
-		case GLFW_KEY_SPACE:
+		case GLFW_KEY_ENTER:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
-				spline->DeleteControlPoint();
+				animationFrame = spline->CreateControlPoint(animationFrame, camera.GetPosition(), camera.GetAxis()[2]); //from camera
 			else
-				spline->CreateControlPoint();
+				animationFrame = spline->CreateControlPoint(animationFrame);
 			break;
 
 		case GLFW_KEY_BACKSPACE:
 			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
 				spline->DeleteCustomOrientation();
+			else
+				animationFrame = spline->DeleteControlPoint(animationFrame);
+			break;
+
+		case GLFW_KEY_SPACE:
+			isPaused = !isPaused;
 			break;
 
 		case GLFW_KEY_F2:
@@ -86,15 +64,35 @@ public:
 		case GLFW_KEY_F3:
 			spline->PrintControlPoints();
 			break;
+
+		case GLFW_KEY_F4:
+			spline->ToggleCyclicOrClamped();
+			break;
+
+		}
+	};
+
+	void Update(float deltaTime) override
+	{
+		camera.Update(deltaTime);
+		UpdateSpline(deltaTime);
+
+		if (!isPaused || Input::isKeyPressed(GLFW_KEY_Z) || Input::isKeyPressed(GLFW_KEY_X)) {
+			int step = Input::isKeyPressed(GLFW_KEY_Z) ? -1 : !isPaused + Input::isKeyPressed(GLFW_KEY_X);
+			animationFrame += 10.0f * step * deltaTime * (1/spline->GetLength());
+			if (animationFrame < 0)
+				animationFrame += (int)animationFrame + 1;
+			animationFrame = fmodf(animationFrame, 1);
 		}
 
-	};
-	void Update() override
-	{
-		camera.Update();
-		UpdateSpline();
-
-		animationFrame = fmodf(animationFrame + 0.00025f, 1);
+		if (Input::isKeyPressed(GLFW_KEY_F)) {
+			if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+				camera.MoveTo(spline->SelectedControlPoint() - camera.GetAxis()[2] * 10.0f);
+			}
+			else {
+				camera.MoveTo(spline->GetPoint(animationFrame) - camera.GetAxis()[2] * 10.0f);
+			}
+		}
 	}
 
 	void Render(Shader& shader) override
@@ -105,17 +103,23 @@ public:
 
 protected:
 
-	void UpdateSpline() 
+	void UpdateSpline(float deltaTime) 
 	{
-		static const float speed = 0.01f;
 		if (Input::isKeyPressed(GLFW_KEY_LEFT_SHIFT)) 
 		{
+			static const float speed = 1.5f * deltaTime;
+
 			int x = Input::isKeyPressed(GLFW_KEY_D) - Input::isKeyPressed(GLFW_KEY_A);
-			int y = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);
-			int z = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
+			int y = Input::isKeyPressed(GLFW_KEY_Q) - Input::isKeyPressed(GLFW_KEY_E);
+			int z = Input::isKeyPressed(GLFW_KEY_W) - Input::isKeyPressed(GLFW_KEY_S);
 			if (x != 0 || y != 0 || z != 0) 
 			{
-				spline->TranslateControlPoint(glm::vec3(x, y, z) * speed);
+				glm::mat3 axis = camera.GetAxis();
+				axis[2].y = 0.0f;
+				axis[2] = glm::normalize(axis[2]);
+				axis[1] = glm::vec3(0.0f, 1.0f, 0.0f);
+				axis[0] = glm::cross(axis[2], axis[1]);
+				spline->TranslateControlPoint((axis[0] * (float)x + axis[1] * (float)y + axis[2] * (float)z) * speed);
 			}
 
 			int ax = Input::isKeyPressed(GLFW_KEY_UP) - Input::isKeyPressed(GLFW_KEY_DOWN);
@@ -153,6 +157,7 @@ private:
 
 	// animatedPoint
 	float animationFrame = 0.0f;
+	bool isPaused;
 
 	// camera
 	FreeCamera camera;

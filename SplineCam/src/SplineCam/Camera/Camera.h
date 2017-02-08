@@ -8,7 +8,7 @@ class Camera
 public:
 	virtual ~Camera() {}
 	virtual void OnMouseMove(float x, float y){}
-	virtual void Update(){}
+	virtual void Update(float deltaTime){}
 
 	void Init(const glm::vec3& pos, const glm::vec3& focusPos, float fov, float aspect, float zNear, float zFar)
 	{
@@ -38,6 +38,14 @@ public:
 
 		UpdateCameraVectors();
 	}
+
+	void MoveTo(const glm::vec3& position)
+	{
+		pos = position;
+
+		UpdateCameraVectors();
+	}
+
 	void Rotate(const glm::vec3& angles)
 	{
 		this->eulerAngles += angles;
@@ -68,6 +76,9 @@ public:
 
 		UpdateCameraVectors();
 	}
+
+	glm::mat3 GetAxis() { return glm::mat3(right, up, forward);	}
+	glm::vec3 GetPosition() { return pos; }
 
 protected:
 	Camera() {}

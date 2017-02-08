@@ -31,9 +31,9 @@ public:
 	{
 	};
 
-	void Update() override
+	void Update(float deltaTime) override
 	{
-		camera.Update();
+		camera.Update(deltaTime);
 	}
 
 	void Render(Shader& shader) override
