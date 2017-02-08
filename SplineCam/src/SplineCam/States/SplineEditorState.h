@@ -79,7 +79,7 @@ public:
 
 		if (!isPaused || Input::isKeyPressed(GLFW_KEY_Z) || Input::isKeyPressed(GLFW_KEY_X)) {
 			int step = Input::isKeyPressed(GLFW_KEY_Z) ? -1 : !isPaused + Input::isKeyPressed(GLFW_KEY_X);
-			animationFrame += 0.1f * step * deltaTime;
+			animationFrame += 10.0f * step * deltaTime * (1/spline->GetLength());
 			if (animationFrame < 0)
 				animationFrame += (int)animationFrame + 1;
 			animationFrame = fmodf(animationFrame, 1);

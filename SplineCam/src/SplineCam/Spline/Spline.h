@@ -197,15 +197,18 @@ public:
 	const std::vector<glm::vec3>& ControlPoints() const { return controlPoints; }
 	const glm::vec3& SelectedControlPoint() const { return controlPoints[selectedControlPoint]; }
 
-	void PrintControlPoints()
+	void PrintControlPoints() const
 	{
 		for (auto& point : controlPoints)
 		{
 			printf("( %f, %f, %f)\n", point.x, point.y, point.z);
 		}
+		printf("Length: %f\n", length);
 	}
 
 	void ToggleCyclicOrClamped() { isCyclic = !isCyclic; CalculateSplinePoints(); }
+
+	float GetLength() const { return length; }
 
 protected:
 
@@ -296,6 +299,13 @@ protected:
 			section.push_back(x1);
 			splineSections.push_back(section);
 		}
+
+		// Recompute the length
+		std::vector<glm::vec3> points = GetSplinePoints();
+		length = 0.0f;
+		for (int i = 0; i < points.size() - 1; i++) {
+			length += glm::distance(points[i], points[i + 1]);
+		}
 	}
 
 	std::vector<glm::vec3> GetSplinePoints() {
@@ -341,6 +351,9 @@ protected:
 
 	// Whether this spline is cyclic or clamped.
 	bool isCyclic = false;
+
+	// The approximated (calculating via sampling) length of the spline
+	float length;
 };
 
 #endif

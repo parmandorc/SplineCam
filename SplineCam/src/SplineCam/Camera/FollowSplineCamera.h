@@ -26,7 +26,7 @@ public:
 
 			if (!isPaused || doRewind || doFastForward) {
 				int step = doRewind ? -1 : !isPaused + doFastForward;
-				t += 0.1f * step * deltaTime;
+				t += 10.0f * step * deltaTime * (1/spline->GetLength());
 				if (t < 0)
 					t += (int)t + 1;
 				t = fmodf(t, 1);
