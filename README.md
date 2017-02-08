@@ -1,4 +1,4 @@
-# SplineCam
+# SplineCam ([Video demo](https://youtu.be/T_a2e2jTyLA))
 
 ### Mode
 
